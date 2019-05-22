@@ -1,0 +1,43 @@
+
+{% load static %}
+{% if my_docs %}
+<div class="row mx-2">
+    <div class=""><a href="" class="text-dark"><h3>Мои документы</h3></a></div>
+</div>
+<div class="row border-bottom bg-secondary rounded text-light">
+    <div class="col-lg-4">
+        ФИО
+    </div>
+    <div class="col-lg-3">
+        Дата рождения
+    </div>
+    <div class="col-lg-3">
+        ИНН
+    </div>
+    <div class="col-lg-2">
+        ИНН
+    </div>
+</div>
+{%for criminal in my_docs %}
+
+<div class="row border-bottom">
+    <div class="col-md-4 col-lg-4">
+        <a class="text-muted" href="{{ criminal.get_absolute_url }}">{{criminal}}</a>
+    </div>
+    <div class="col-md-3 col-lg-3">
+        {{ criminal.birthday }}
+    </div>
+    <div class="col-md-2 col-lg-3">
+        {{ criminal.INN }}
+    </div>
+    <div class="col-md-2 col-lg-2">
+        <img src="{% static 'access/icon_view.png' %}" alt="">
+        <img src="{% static 'access/icon_redact.png' %}" alt="">
+        <img src="{% static 'access/icon_execute.png' %}" alt="">
+        <img src="{% static 'access/icon_access_open.png' %}" alt="">
+        <img src="{% static 'access/icon_access_close.png' %}" alt="">
+    </div>
+</div>
+{% endfor %}
+<br>
+{% endif %}

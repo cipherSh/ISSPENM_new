@@ -1,0 +1,39 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{%endblock title%}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+</head>
+
+<body class="">
+    <div class="container-fluid pt-4 p-0">
+
+        <header class="blog-header fixed-top bg-dark font-weight-normal text-light">
+            <div class="row flex-nowrap justify-content-between align-items-center header-font header-padding">
+
+                {% include 'main_includes/include_navbar.html' %}
+
+            </div>
+        </header>
+
+        <br>
+
+        <div class="container-fluid mt-4 px-5" style="min-height:700px">
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+
+        <footer class="container-fluid mt-1 bg-dark">
+            fadsfdsfdasfadf
+            da
+            fdf
+            a
+        </footer>
+    </div>
+
+</body>
+</html>

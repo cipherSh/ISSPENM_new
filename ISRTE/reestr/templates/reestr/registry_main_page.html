@@ -1,0 +1,33 @@
+{% extends "wrapper.html" %}
+{% load static %}
+{% block show_list %}
+<div class="row">
+    <div class="col-lg-10"></div>
+    <div class="col-lg-2"><a href="{% url 'criminals_list_url' %}">Показать весь список</a></div>
+</div>
+{% endblock %}
+{% block content_wrapper %}
+
+<!-- Название страницы -->
+<!-- Название стобцов-->
+<div class="row border p-3" style="min-height:570px">
+    <div class="col-lg-12" style="margin-right:100px">
+
+        <!-- Мои документы -->
+
+        {% include "reestr/includes/include_my_docs_list.html" %}
+
+        <!-- Недавно добавленные -->
+
+        {% include "reestr/includes/include_criminals_list.html" %}
+
+        <!-- Не подтвержденные документы-->
+
+        {% include "reestr/includes/include_uncheck_docs_list.html" %}
+
+    </div>
+
+</div>
+
+
+{% endblock content_wrapper %}

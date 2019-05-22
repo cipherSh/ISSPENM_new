@@ -1,0 +1,33 @@
+
+{% load static %}
+{% if criminals%}
+<div class="row mx-2">
+    <div class=""><h3>{% if recent %}Недавно добавленные{% endif %}</h3></div>
+</div>
+<div class="row border-bottom bg-secondary rounded text-light">
+    <div class="col-md-4 col-lg-4">ФИО</div>
+    <div class="col-md-3 col-lg-3">Дата рождения</div>
+    <div class="col-md-2 col-lg-3">ИНН</div>
+    <div class="col-md-2 col-lg-2">ИНН</div>
+</div>
+
+<!-- Список террористов -->
+{%for criminal in criminals %}
+
+<div class="row border-bottom">
+    <div class="col-md-4 col-lg-4">
+        <a class="text-muted" href="{{ criminal.get_absolute_url }}">{{criminal}}</a>
+    </div>
+    <div class="col-md-3 col-lg-3">{{ criminal.birthday }}</div>
+    <div class="col-md-2 col-lg-3">{{ criminal.INN }}</div>
+    <div class="col-md-2 col-lg-2">
+        <a href=""><img src="{% static 'access/icon_view.png' %}" alt=""></a>
+        <img src="{% static 'access/icon_redact.png' %}" alt="">
+        <img src="{% static 'access/icon_execute.png' %}" alt="">
+        <img src="{% static 'access/icon_access_open.png' %}" alt="">
+        <img src="{% static 'access/icon_access_close.png' %}" alt="">
+    </div>
+</div>
+{% endfor %}
+<br>
+{% endif %}

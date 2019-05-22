@@ -1,0 +1,12 @@
+.header-padding{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.header-font{
+    font-family: "Times New Roman";
+}
+
+.stock-container{
+    height:100%
+    min-height: 100%;
+}

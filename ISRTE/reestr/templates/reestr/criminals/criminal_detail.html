@@ -1,0 +1,145 @@
+{% extends "wrapper.html" %}
+{% load staticfiles %}
+{% block title %}{{ criminal.last_name }} {{ criminal.first_name }} {{ criminal.patronymic }}{% endblock title %}
+
+{% block show_list %}
+<div class="row">
+    <div class="col-lg-10"></div>
+    <div class="col-lg-2"><a href="{% url 'criminals_list_url' %}">Показать весь список</a></div>
+</div>
+{% endblock %}
+
+{% block content_wrapper %}
+
+<div class="row border rounded mb-5">
+    <!-- ФИО -->
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-8 text-center"><h3>{{ criminal }}</h3></div>
+            <div class="col-lg-2">
+                <div class="row p-1">
+                    <div class="col-lg-7 p-0"></div>
+                    {% if criminal.check %}
+                    <div class="col-lg-5 bg-success rounded text-light p-0"><h6>Подтвержден</h6></div>
+                    {% else %}
+                    <div class="col-lg-5 btn btn-sm p-0 btn-warning rounded text-light"><h6>1</h6></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- навбар -->
+    <div class="col-lg-3 border-top border-right">
+        <div class="row mb-2 mt-2 justify-content-center bg-dark pt-2 pb-2 rounded">
+            <div>
+                <img src="{% static 'homepage/images/no_photo.jpg' %}" class="rounded border" width="300"
+                     height="300">
+            </div>
+        </div>
+        <hr>
+        {% if not request.user.profile.role_id.role_type == 'staff' %}
+        <div class="row px-2 pt-2 pb-2 bg-dark rounded">
+            <hr>
+
+            {% include 'reestr/includes/include_criminal_detail_nav_btn.html' %}
+
+            <br>
+        </div>
+
+        {% endif %}
+    </div>
+    <!-- досье -->
+    {% include "reestr/criminals/includes/include_criminal_dosye.html"%}
+    <!-- информация -->
+    <div class="col-lg-2 border-left border-top pt-2">
+        {% if not criminal.check %}
+        {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head'%}
+        <a href="#" class="btn btn-success btn-block ">Подтвердить</a>
+        {% endif %}
+        {% endif %}
+        {% if criminal.owner == request.user.profile or request.user.is_superuser %}
+        <a href="{{ criminal.get_update_url }}" class="btn btn-success btn-block ">Редактировать</a>
+        {% endif %}
+        {% if request.user.is_superuser %}
+        <a href="{{ criminal.get_delete_url}}" class="btn btn-danger btn-block ">Удалить</a>
+        {% endif %}
+        <a href="#" class="btn btn-success btn-block ">Печать</a>
+        <br>
+        <div class="row m-0 p-0">
+            <span class="mx-2">Владелец:</span>
+            <a href="#" class="text-muted">{{criminal.owner}}</a>
+            <span class="mx-2">Создан:</span>
+            <a href="">{{criminal.user}}</a>
+            <span class="mx-2">Дата создания:</span>
+            <span class="text-primary">{{criminal.created}}</span>
+            <span class="mx-2">Уровень секретности:</span>
+            {% if criminal.confident %}
+            <span class="text-primary">{{criminal.confident}}</span>
+            {% else %}
+            <span class="text-primary">Открытая информация</span>
+            {% endif %}
+            {% if criminal.owner == request.user.profile or request.user.is_superuser %}
+            <a href="{{ criminal.get_criminal_confident_change_url }}" class="btn btn-primary btn-sm btn-block">Изменить
+                уровень секретности</a>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <a href="{{ criminal.get_criminal_change_owner_url }}" class="btn btn-secondary btn-sm btn-block">Сменить
+                владельцца</a>
+            {% endif %}
+        </div>
+        <hr>
+        <div class="row m-0 p-0">
+            {% if criminal.owner == request.user.profile or request.user.is_superuser %}
+            {% if criminal.close == False%}
+            <a href="#" class="btn btn-danger btn-sm btn-block">Закрыть
+                доступ</a>
+            {% else %}
+            <a href="#" class="btn btn-warning btn-sm btn-block">Открыть
+                доступ</a>
+            {% endif %}
+            <a href="#" class="btn btn-success btn-sm btn-block">Открыть
+                групповой доступ</a>
+            <a href="#" class="btn btn-success btn-sm btn-block">Открыть
+                индивидуальный доступ</a>
+            <span>Имеющие доступ</span>
+            <div class="col-12 m-0 p-0">
+                <span>Группы:</span>
+            </div>
+            <span>Сотрудники:</span>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+{% if address %}
+{% include "reestr/criminals/includes/include_criminal_address.html"%}
+{% endif %}
+
+{% if contacts_detail %}
+{% include "reestr/criminals/includes/include_criminal_contacts_detail.html"%}
+{% endif %}
+
+{% if relatives %}
+{% include "reestr/criminals/includes/include_criminal_relatives.html"%}
+{% endif %}
+
+{% if contact_persons %}
+{% include "reestr/criminals/includes/include_contact_persons.html"%}
+{% endif %}
+
+{% if convictions %}
+{% include "reestr/criminals/includes/include_conviction.html"%}
+{% endif %}
+
+{% if criminal_case %}
+{% include "reestr/criminals/includes/include_criminal_case.html"%}
+{% endif %}
+
+{% if manhunt %}
+{% include "reestr/criminals/includes/include_manhunt.html"%}
+{% endif %}
+
+{% endblock content_wrapper %}

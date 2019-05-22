@@ -1,0 +1,23 @@
+{% extends "wrapper.html" %}
+
+{% block content_wrapper %}
+<div class="row"><h3>Изменение уровня сектретности досье {{criminal}}</h3></div>
+<br>
+    <form action="{{ criminal.get_confident_change_url }}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+
+            {% if field.error %}
+                {{ field.error }}
+            {% endif %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-3">{{field.label}}</div>
+                    <div class="col-lg-6">{{field}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+
+{% endblock %}

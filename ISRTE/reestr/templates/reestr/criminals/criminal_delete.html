@@ -1,0 +1,15 @@
+{% extends "wrapper.html" %}
+
+{% block content_wrapper %}
+
+<form action="{{ criminal.get_delete_url }}" method="post">
+    {% csrf_token %}
+
+    <h3>Вы уверены, что хотите удалить досье <b>{{ criminal }}</b>?</h3>
+    <br>
+    <a href="{{ criminal.get_absolute_url }}" class="btn btn-primary">Отмена</a>
+    <button type="submit" name="button" class="btn btn-danger round">Удалить</button>
+
+</form>
+
+{% endblock %}

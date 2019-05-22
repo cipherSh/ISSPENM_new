@@ -1,0 +1,25 @@
+<div class="row rounded border mb-5">
+    <div class="col-lg-12 round">
+        <div class="row d-flex bg-dark justify-content-center text-align-center">
+            <div class="text-light"><h4>Розыскное дело</h4></div>
+        </div>
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-lg-2">№ РД</div>
+            <div class="col-lg-2">№ УД</div>
+            <div class="col-lg-3">Инициатор</div>
+            <div class="col-lg-2">Дата завдения</div>
+            <div class="col-lg-2">Мера пресечения</div>
+            <div class="col-lg-1">Прекращен</div>
+        </div>
+        {% for hunt in manhunt %}
+        <div class="row border-bottom rounded">
+            <div class="col-lg-2">{{ hunt.invest_case_number }}</div>
+            <div class="col-lg-2">{{ hunt.criminalCase_id }}</div>
+            <div class="col-lg-3">{{ hunt.invest_initiator}}</div>
+            <div class="col-lg-2">{{ hunt.date_arousal}}</div>
+            <div class="col-lg-2">{{ hunt.preventive }}</div>
+            <div class="col-lg-1">{{ hunt.invest_stopped }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

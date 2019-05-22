@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row blog-header navbar-container bg-dark rounded text-light justify-content-center mb-4">
+    <div class="col-lg-3"><h3>{{ wrapper_title }}</h3></div>
+    <div class="col-lg-6"></div>
+    <div class="col p-1">
+        {% if nav_btn_add %}
+        <a href="{% url nav_btn_add %}" class="btn btn-outline-light btn-sm btn-block">Добавить</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if search_url %}
+
+    {% include "main_includes/include_wrapper_search.html" %}
+
+{% endif %}
+
+{% block show_list %}
+
+{% endblock %}
+
+<div class="row" style="min-height:600px">
+    <div class="col-md-9 col-lg-12 content-container pl-4 pt-2 pr-4">
+        {% block content_wrapper %}
+
+        {% endblock content_wrapper %}
+    </div>
+</div>
+{% endblock content %}

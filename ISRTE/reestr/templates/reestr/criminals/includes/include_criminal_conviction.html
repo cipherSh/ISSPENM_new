@@ -1,0 +1,23 @@
+<div class="row rounded border mb-5">
+    <div class="col-lg-12 round">
+        <div class="row d-flex bg-dark justify-content-center text-align-center">
+            <div class="text-light"><h4>Судимость</h4></div>
+        </div>
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-lg-2">№ УД</div>
+            <div class="col-lg-3">Возбудивший орган</div>
+            <div class="col-lg-3">Статья</div>
+            <div class="col-lg-2">Дата приговора</div>
+            <div class="col-lg-2">Дата освобождения</div>
+        </div>
+        {% for conviction in convictions %}
+        <div class="row border-bottom rounded">
+            <div class="col-lg-2">{{conviction.criminal_case_number}}/{{conviction.criminal_case_year}}</div>
+            <div class="col-lg-3">{{conviction.criminal_case_organ}}</div>
+            <div class="col-lg-3">{{conviction.law_article}}</div>
+            <div class="col-lg-2">{{conviction.date_sentence}}</div>
+            <div class="col-lg-2">{{conviction.date_release}}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
