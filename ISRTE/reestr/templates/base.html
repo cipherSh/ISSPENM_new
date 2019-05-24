@@ -28,10 +28,9 @@
         </div>
 
         <footer class="container-fluid mt-1 bg-dark">
-            fadsfdsfdasfadf
-            da
-            fdf
-            a
+            {% if user.is_staff %}
+            <a href="/admin/">Панель администратора</a>
+            {% endif %}
         </footer>
     </div>
 

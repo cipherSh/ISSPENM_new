@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render, redirect, reverse
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
@@ -16,11 +17,12 @@ from .models import Criminals, Persons, CriminalAddresses, Conviction, Confluenc
 
 # Create your views here.
 
-
+@login_required
 def homepage(request):
     return render(request, 'home.html')
 
 
+@login_required
 def registry_page(request):
     nav_btn_add = 'criminal_create_url'
     wrapper_title = "Реестр"
@@ -62,6 +64,7 @@ def criminals_list(request):
     return render(request, "reestr/criminals/criminals_list.html", context=context)
 
 
+@login_required
 def criminal_detail(request, pk):
     criminal = Criminals.objects.get(id=pk)
     address = CriminalAddresses.objects.filter(criminal_id=criminal)
@@ -85,6 +88,86 @@ def criminal_detail(request, pk):
         'criminal_case': criminal_case
     }
     return render(request, 'reestr/criminals/criminal_detail.html', context=context)
+
+
+@login_required
+def criminal_close_change(request, pk):
+    criminal = Criminals.objects.get(id=pk)
+    if criminal.close == False:
+        criminal.close = True
+    else:
+        criminal.close = False
+    criminal.save()
+    return redirect(criminal)
+
+
+@login_required
+def criminal_check(request, pk):
+    criminal = Criminals.objects.get(id=pk)
+    criminal.check = True
+    criminal.save()
+    return redirect(criminal)
+
+
+# Criminal case
+
+@login_required
+def cc_list(request):
+
+    search_query = request.GET.get('search_query_text', '')
+
+    if search_query:
+        text = re.split('\W+', search_query)
+        for word in text:
+            cc = CriminalCase.objects.filter(Q(number__icontains=word) | Q(year__icontains=word) |
+                                             Q(organ__icontains=word) | Q(date_arousal__icontains=word) | Q(date_suspension__icontains=word))
+    else:
+        cc = CriminalCase.objects.all()
+
+    context = {
+        'nav_btn_add': 'criminal_create_url',
+        'wrapper_title': "Уголовные дела",
+        'search_url': 'cc_list_url',
+        'case_list': cc
+    }
+    return render(request, 'reestr/criminal_case_main_page.html', context=context)
+
+
+@login_required
+def cc_detail(request, pk):
+    cc = CriminalCase.objects.get(id=pk)
+    ccm = CriminalCaseCriminals.objects.filter(criminal_case=cc)
+    context = {
+        'nav_btn_add': 'criminal_create_url',
+        'wrapper_title': "Уголовные дела",
+        'search_url': 'cc_list_url',
+        'case': cc,
+        'ccm': ccm
+    }
+    return render(request, 'reestr/ccase/cc-detail.html', context=context)
+
+
+# Manhunt
+@login_required
+def manhunt_list(request):
+    search_query = request.GET.get('search_query_text', '')
+    if search_query:
+        manhunts = Manhunt.objects.filter(Q(invest_case_number__icontains=search_query) |
+                                          Q(date_arousal__icontains=search_query))
+    else:
+        manhunts = Manhunt.objects.order_by('date_arousal')
+    context = {
+        'wrapper_title': "Розыскные дела",
+        'search_url': 'manhunt_list_url',
+        'manhunts': manhunts
+    }
+    return render(request, 'reestr/manhunt_main_page.html', context=context)
+
+
+@login_required
+def manhunt_detail(request, pk):
+    manhunt = Manhunt.objects.get(id=pk)
+    return render(request, 'reestr/ccase/manhunt-detail.html', context={'manhunt': manhunt})
 
 
 class CriminalCreateView(View):
@@ -373,7 +456,7 @@ class ManhuntUpdateView(View):
             'manhunt': manhunt,
             'form': form,
         }
-        return render(request, 'reestr/criminals/add/manhunt_update.html', context=context)
+        return render(request, 'reestr/ccase/manhunt_update.html', context=context)
 
     def post(self, request, pk):
         manhunt = Manhunt.objects.get(id=pk)
@@ -385,4 +468,4 @@ class ManhuntUpdateView(View):
         if bound_form.is_valid():
             new_manhunt = bound_form.save()
             return redirect(new_manhunt)
-        return render(request, 'reestr/criminals/add/manhunt_update.html', context=context)
+        return render(request, 'reestr/ccase/manhunt_update.html', context=context)

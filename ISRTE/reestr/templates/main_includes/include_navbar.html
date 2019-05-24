@@ -9,20 +9,27 @@
                 <a class="nav-link" href="{% url 'registry_url' %}">Реестр</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">Уголовные дела</a>
+                <a class="nav-link" href="{% url 'cc_list_url' %}">Уголовные дела</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">Розыскные дела</a>
+                <a class="nav-link" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
             </li>
+            {% if perms.auth.add_user %}
             <li class="nav-item">
-                <a class="nav-link" href="">Пользователи</a>
+                <a class="nav-link" href="{% url 'users_list_url' %}">Пользователи</a>
             </li>
+            {% endif %}
+            {% if perms.auth.view_group %}
             <li class="nav-item">
-                <a class="nav-link" href="">Группы</a>
+                <a class="nav-link" href="{% url 'group_list_url' %}">Группы</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'group_list_url' %}">Управление доступом</a>
             </li>
         </ul>
     </div>
 </nav>
 <div class="col-4 d-flex justify-content-end align-items-center">
-    <a class="btn bt-sm btn-outline-secondary" href="">{{ user.get_username }}</a>
+    <a class="btn bt-sm btn-outline-secondary" href="{% url 'logout_url' %}">{{ user.get_username }}</a>
 </div>

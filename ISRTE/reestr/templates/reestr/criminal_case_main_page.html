@@ -1,0 +1,37 @@
+{% extends "wrapper.html" %}
+{% block page%}
+<div class="col-lg-5"></div>
+<div class="col-lg-3"><h4>Уголовное дело</h4></div>
+<div class="col-lg-4 p-1">
+    <div class="row">
+        <div class="col-lg-6"></div>
+        <div class="col-lg-6"><a href="" class="btn btn-success btn-sm btn-block">Добавить</a></div>
+    </div>
+
+</div>
+{% endblock %}
+{% block content_wrapper %}
+
+<div class="row rounded border p-3" style="min-height:570px">
+    <div class="col-lg-12 round">
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-lg-2">№ УД</div>
+            <div class="col-lg-3">Возбудивший орган</div>
+            <div class="col-lg-3">Статья</div>
+            <div class="col-lg-2">Дата завдения</div>
+            <div class="col-lg-2">Дата приостановление</div>
+        </div>
+        {% for case in case_list %}
+        <a href="{{ case.get_absolute_url }}" class="text-muted">
+            <div class="row border-bottom rounded">
+                <div class="col-lg-2">{{ case.number }}/{{ case.year}}</div>
+                <div class="col-lg-3">{{ case.organ }}</div>
+                <div class="col-lg-3">{{ case.article }}</div>
+                <div class="col-lg-2">{{ case.date_arousal }}</div>
+                <div class="col-lg-2">{{ case.date_suspension }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content_wrapper %}

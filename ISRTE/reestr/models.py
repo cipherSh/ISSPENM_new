@@ -142,13 +142,13 @@ class Criminals(models.Model):
     def __str__(self):
         return self.last_name + ' ' + self.first_name + ' ' + self.patronymic
 
-    def get_absolute_url(self):
+    def get_absolute_url(self):#
         return reverse('criminal_detail_url', kwargs={'pk': self.id})
 
-    def get_update_url(self):
+    def get_update_url(self):#
         return reverse('criminal_update_url', kwargs={'pk': self.id})
 
-    def get_delete_url(self):
+    def get_delete_url(self):#
         return reverse('criminal_delete_url', kwargs={'pk': self.id})
 
     def get_group_access_create_url(self):
@@ -157,25 +157,25 @@ class Criminals(models.Model):
     def get_personal_access_create_url(self):
         return reverse('personal_access_create_url', kwargs={'pk': self.id})
 
-    def get_relative_add_url(self):
+    def get_relative_add_url(self):#
         return reverse('criminal_add_relative_url', kwargs={'pk': self.id})
 
-    def get_contact_person_add_url(self):
+    def get_contact_person_add_url(self):#
         return reverse('contact_person_add_url', kwargs={'pk': self.id})
 
-    def get_address_add_url(self):
+    def get_address_add_url(self):#
         return reverse('address_add_url', kwargs={'pk': self.id})
 
-    def get_contact_add_url(self):
+    def get_contact_add_url(self):#
         return reverse('contact-detail_add_url', kwargs={'pk': self.id})
 
-    def get_conviction_add_url(self):
+    def get_conviction_add_url(self):#
         return reverse('conviction_add_url', kwargs={'pk': self.id})
 
-    def get_criminal_case_add_url(self):
+    def get_criminal_case_add_url(self):#
         return reverse('criminal_case_add_url', kwargs={'pk': self.id})
 
-    def get_manhunt_add_url(self):
+    def get_manhunt_add_url(self):#
         return reverse('manhunt_add_url', kwargs={'pk': self.id})
 
     def get_criminal_close_change_url(self):
@@ -184,10 +184,10 @@ class Criminals(models.Model):
     def get_criminal_check_url(self):
         return reverse('criminal_check_url', kwargs={'pk': self.id})
 
-    def get_criminal_change_owner_url(self):
+    def get_criminal_change_owner_url(self):#
         return reverse('criminal_change_owner_url', kwargs={'pk': self.id})
 
-    def get_criminal_confident_change_url(self):
+    def get_criminal_confident_change_url(self):#
         return reverse('criminal_confident_change_url', kwargs={'pk': self.id})
 
 
@@ -370,7 +370,6 @@ class CriminalsContactPersons(models.Model):
         return str(self.criminal_id) + '--' + str(self.person_id)
 
 
-
 class CriminalCase(models.Model):
     number = models.CharField(max_length=200, verbose_name='Номер уголовного дела')
     year = models.CharField(max_length=10, verbose_name='Год уголовного дела')
@@ -389,7 +388,7 @@ class CriminalCase(models.Model):
         return self.number + '/' + self.year
 
     def get_absolute_url(self):
-        return reverse('cc_detail', kwargs={'pk': self.id})
+        return reverse('cc_detail_url', kwargs={'pk': self.id})
 
 
 class CriminalCaseCriminals(models.Model):
@@ -429,7 +428,7 @@ class Manhunt(models.Model):
         return self.invest_case_number
 
     def get_absolute_url(self):
-        return reverse('manhunt-detail_url', kwargs={'pk': self.id})
+        return reverse('manhunt_detail_url', kwargs={'pk': self.id})
 
     def get_update_url(self):
         return reverse('manhunt_update_url', kwargs={'pk': self.id})

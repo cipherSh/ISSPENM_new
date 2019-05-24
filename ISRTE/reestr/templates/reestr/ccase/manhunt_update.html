@@ -1,0 +1,22 @@
+{% extends "wrapper.html" %}
+
+{% block content_wrapper %}
+<div class="row"><h1>Редактирование розыскное дело <b>{{manhunt}}</b></h1></div>
+<br>
+    <form action="{{manhunt.get_update_url}}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+
+            {% if field.error %}
+                {{ field.error }}
+            {% endif %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-3">{{field.label}}</div>
+                    <div class="col-lg-6">{{field}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+{% endblock %}

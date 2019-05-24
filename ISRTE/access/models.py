@@ -11,6 +11,9 @@ from reestr.models import Criminals
 class GroupAccess(models.Model):
     doc_id = models.ForeignKey(Criminals, verbose_name='Досье', on_delete=models.CASCADE)
     group_id = models.ForeignKey(Group, verbose_name='Группа', on_delete=models.CASCADE)
+    add = models.BooleanField(default=False, verbose_name='Права на добавление')
+    update = models.BooleanField(default=False, verbose_name='Права на изменение')
+    execute = models.BooleanField(default=False, verbose_name='Права на выполнение')
 
     class Meta:
         verbose_name = 'Групповой доступ'
@@ -26,6 +29,9 @@ class GroupAccess(models.Model):
 class PersonAccess(models.Model):
     doc_id = models.ForeignKey(Criminals, verbose_name='Досье', on_delete=models.CASCADE)
     user_id = models.ForeignKey(Profile, verbose_name='Пользователь', on_delete=models.CASCADE)
+    add = models.BooleanField(default=False, verbose_name='Права на добавление')
+    update = models.BooleanField(default=False, verbose_name='Права на изменение')
+    execute = models.BooleanField(default=False, verbose_name='Права на выполнение')
     special = models.BooleanField(default=False, verbose_name='Специальный допуск')
 
     class Meta:

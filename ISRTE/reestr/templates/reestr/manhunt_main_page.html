@@ -1,0 +1,32 @@
+{% extends "wrapper.html" %}
+{% block page%}
+<div class="col-lg-5"></div>
+<div class="col-lg-3"><h4>Розыскные дела</h4></div>
+<div class="col-lg-4 p-1"></div>
+{% endblock %}
+{% block content_wrapper %}
+<div class="row rounded border p-3" style="min-height:570px">
+    <div class="col-lg-12 round">
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-lg-2">№ РД</div>
+            <div class="col-lg-2">№ УД</div>
+            <div class="col-lg-2">Инициатор зав. РД</div>
+            <div class="col-lg-2">Дата завдения</div>
+            <div class="col-lg-2">Мера пресечение</div>
+            <div class="col-lg-2">Прекращен</div>
+        </div>
+        {% for manhunt in manhunts %}
+        <a href="{{ manhunt.get_absolute_url }}" class="text-muted">
+            <div class="row border-bottom rounded">
+                <div class="col-lg-2">{{ manhunt.invest_case_number }}</div>
+                <div class="col-lg-2">{{ manhunt.criminalCase_id }}</div>
+                <div class="col-lg-2">{{ manhunt.invest_initiator }}</div>
+                <div class="col-lg-2">{{ manhunt.date_arousal }}</div>
+                <div class="col-lg-2">{{ manhunt.preventive }}</div>
+                <div class="col-lg-2">{{ manhunt.invest_stopped }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content_wrapper %}

@@ -1,0 +1,76 @@
+{% extends "wrapper.html" %}
+{% block page%}
+<div class="col-lg-5"></div>
+<div class="col-lg-3"><h4>Уголовное дело</h4></div>
+<div class="col-lg-4 p-1">
+    <div class="row">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4"><a href="" class="btn btn-success btn-sm btn-block">Добавить</a></div>
+    </div>
+
+</div>
+{% endblock %}
+{% block content_wrapper %}
+<div class="row rounded">
+    <div class="col-lg-5"></div>
+    <div class="col-lg-4"><h3>{{case}}</h3></div>
+    <div class="col-lg-3"></div>
+</div>
+<div class="row my-2 mx-3">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <div class="row mb-1">
+            <div class="col-lg-4 font-weight-bold">Статья:</div>
+            <div class="col-lg-8">{{ case.article}}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-lg-4 font-weight-bold">Возбудивший орган:</div>
+            <div class="col-lg-8">{{case.organ}}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-lg-4 font-weight-bold">Дата возбуждения</div>
+            <div class="col-lg-8">{{case.date_arousal}}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-lg-4 font-weight-bold">Дата приостановление</div>
+            <div class="col-lg-8">{{case.date_suspension}}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-lg-4 font-weight-bold">Примечание</div>
+            <div class="col-lg-8">{{case.remarks}}</div>
+        </div>
+    </div>
+    <div class="col-lg-2 my-3">
+        <div class="col-lg-12">
+            <a href="" class="btn btn-success btn-sm btn-block">Редактировать</a>
+            <a href="" class="btn btn-danger btn-sm btn-block">Удалить дело</a>
+            <a href="" class="btn btn-success btn-sm btn-block">Добавить досье</a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <div class="row mb-1"><b>Проходящие по делу:</b></div>
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-lg-4">ФИО</div>
+            <div class="col-lg-4">Дата рождения</div>
+            <div class="col-lg-3">ИНН</div>
+            <div class="col-lg-1"></div>
+        </div>
+        {% for c in ccm %}
+
+            <div class="row border-bottom">
+
+                <div class="col-lg-4"><a href="{{c.criminal_id.get_absolute_url}}" class="text-dark">{{c.criminal_id}}</a></div>
+                <div class="col-lg-4">{{c.criminal_id.birthday}}</div>
+                <div class="col-lg-3">{{c.criminal_id.INN}}</div>
+
+                <div class="col-lg-1 bg-warning"></div>
+            </div>
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock content_wrapper %}

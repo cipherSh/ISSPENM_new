@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from access.views import GroupAccessCreate, PersonalAccessCreate
 
 urlpatterns = [
     path('', views.homepage, name='homepage_url'),
@@ -11,6 +12,11 @@ urlpatterns = [
     path('registry/criminal/<int:pk>', views.criminal_detail, name="criminal_detail_url"),
     path('registry/criminal/<int:pk>/update/', views.CriminalUpdateView.as_view(), name="criminal_update_url"),
     path('registry/criminal/<int:pk>/delete/', views.CriminalDeleteView.as_view(), name="criminal_delete_url"),
+
+    path('registry/criminal/<int:pk>/access/group/create/', GroupAccessCreate.as_view(),
+         name="group_access_create_url"),
+    path('registry/criminal/<int:pk>/access/personal/create/', PersonalAccessCreate.as_view(),
+         name="personal_access_create_url"),
 
     path('registry/criminal/<int:pk>/add/relative', views.CriminalAddRelativeView.as_view(),
          name="criminal_add_relative_url"),
@@ -31,6 +37,16 @@ urlpatterns = [
          name="criminal_confident_change_url"),
     path('registry/criminal/<int:pk>/update/owner', views.CriminalOwnerChangeView.as_view(),
          name="criminal_change_owner_url"),
+    path('registry/criminal/<int:pk>/update/check', views.criminal_check, name="criminal_check_url"),
+    path('registry/criminal/<int:pk>/update/close', views.criminal_close_change, name="criminal_close_change_url"),
+
+
+    path('registry/cc/', views.cc_list, name="cc_list_url"),
+    path('registry/cc/<int:pk>', views.cc_detail, name="cc_detail_url"),
+
+    path('registry/manhunt/', views.manhunt_list, name="manhunt_list_url"),
+    path('registry/manhunt/<int:pk>', views.manhunt_detail, name="manhunt_detail_url"),
+    path('registry/manhunt/<int:pk>/update', views.ManhuntUpdateView.as_view(), name="manhunt_update_url")
 
 
 ]

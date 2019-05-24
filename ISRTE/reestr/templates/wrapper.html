@@ -4,7 +4,7 @@
     <div class="col-lg-3"><h3>{{ wrapper_title }}</h3></div>
     <div class="col-lg-6"></div>
     <div class="col p-1">
-        {% if nav_btn_add %}
+        {% if nav_btn_add and perms.reestr.add_criminals1 %}
         <a href="{% url nav_btn_add %}" class="btn btn-outline-light btn-sm btn-block">Добавить</a>
         {% endif %}
     </div>

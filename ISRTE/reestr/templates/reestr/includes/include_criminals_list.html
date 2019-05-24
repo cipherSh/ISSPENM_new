@@ -8,7 +8,7 @@
     <div class="col-md-4 col-lg-4">ФИО</div>
     <div class="col-md-3 col-lg-3">Дата рождения</div>
     <div class="col-md-2 col-lg-3">ИНН</div>
-    <div class="col-md-2 col-lg-2">ИНН</div>
+    <div class="col-md-2 col-lg-2"></div>
 </div>
 
 <!-- Список террористов -->
@@ -20,12 +20,15 @@
     </div>
     <div class="col-md-3 col-lg-3">{{ criminal.birthday }}</div>
     <div class="col-md-2 col-lg-3">{{ criminal.INN }}</div>
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-2 col-lg-2 text-right">
+        {% if criminal.close %}
+        <img src="{% static 'access/icon_access_close.png' %}" alt="">
+        {% else %}
         <a href=""><img src="{% static 'access/icon_view.png' %}" alt=""></a>
         <img src="{% static 'access/icon_redact.png' %}" alt="">
         <img src="{% static 'access/icon_execute.png' %}" alt="">
         <img src="{% static 'access/icon_access_open.png' %}" alt="">
-        <img src="{% static 'access/icon_access_close.png' %}" alt="">
+        {% endif %}
     </div>
 </div>
 {% endfor %}

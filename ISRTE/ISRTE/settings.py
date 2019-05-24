@@ -128,6 +128,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/users/login/'
 
-LOGIN_URL = '/'
+LOGIN_URL = '/users/login/'

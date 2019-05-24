@@ -55,7 +55,7 @@
     <div class="col-lg-2 border-left border-top pt-2">
         {% if not criminal.check %}
         {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head'%}
-        <a href="#" class="btn btn-success btn-block ">Подтвердить</a>
+        <a href="{{ criminal.get_criminal_check_url }}" class="btn btn-success btn-block ">Подтвердить</a>
         {% endif %}
         {% endif %}
         {% if criminal.owner == request.user.profile or request.user.is_superuser %}
@@ -92,25 +92,19 @@
         <div class="row m-0 p-0">
             {% if criminal.owner == request.user.profile or request.user.is_superuser %}
             {% if criminal.close == False%}
-            <a href="#" class="btn btn-danger btn-sm btn-block">Закрыть
+            <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-danger btn-sm btn-block">Закрыть
                 доступ</a>
             {% else %}
-            <a href="#" class="btn btn-warning btn-sm btn-block">Открыть
+            <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-warning btn-sm btn-block">Открыть
                 доступ</a>
             {% endif %}
-            <a href="#" class="btn btn-success btn-sm btn-block">Открыть
+            <a href="{{ criminal.get_group_access_create_url }}" class="btn btn-success btn-sm btn-block">Открыть
                 групповой доступ</a>
-            <a href="#" class="btn btn-success btn-sm btn-block">Открыть
+            <a href="{{ criminal.get_personal_access_create_url }}" class="btn btn-success btn-sm btn-block">Открыть
                 индивидуальный доступ</a>
-            <span>Имеющие доступ</span>
-            <div class="col-12 m-0 p-0">
-                <span>Группы:</span>
-            </div>
-            <span>Сотрудники:</span>
             {% endif %}
         </div>
     </div>
-
 </div>
 
 
@@ -135,11 +129,11 @@
 {% endif %}
 
 {% if criminal_case %}
-{% include "reestr/criminals/includes/include_criminal_case.html"%}
+{% include "reestr/criminals/includes/include_criminal_criminal_case.html"%}
 {% endif %}
 
 {% if manhunt %}
-{% include "reestr/criminals/includes/include_manhunt.html"%}
+{% include "reestr/criminals/includes/include_criminal_manhunt.html"%}
 {% endif %}
 
 {% endblock content_wrapper %}

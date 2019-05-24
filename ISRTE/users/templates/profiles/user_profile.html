@@ -1,0 +1,92 @@
+{% extends "wrapper.html" %}
+{% block title%}{{profile}} - пользователь системы{% endblock %}
+{% block page%}{{profile}}({{ profile.user}}){% endblock %}
+{% block content_wrapper %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="row mb-1">
+            <div class="col-lg-3"></div>
+            <div class="col font-weight-bold">{{ profile }}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col font-weight-bold">Зарегистрирован</div>
+            <div class="col">{{ profile.user.date_joined }}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col font-weight-bold">Роль пользователя</div>
+            <div class="col">{{ profile.role_id }}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col font-weight-bold text-danger">Уровень доверия</div>
+            <div class="col">{{ profile.trust_level_id }}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col font-weight-bold text-warning">Последний вход в систему</div>
+            <div class="col">{{ profile.user.last_login }}</div>
+        </div>
+        <div class="row mb-1">
+            <div class="col font-weight-bold text-success">
+                {% if profile.user.is_active %}
+                Пользователь активен
+                {% else %}
+                Пользователь неактивен
+                {% endif %}
+            </div>
+            <div class="col">
+                {% if profile.user.is_active %}
+                <a href="" class="btn btn-warning btn-block">Закрыть доступ в систему</a>
+                {% else %}
+                <a href="" class="btn btn-success btn-block">Открыть доступ в систему</a>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    <div class="col-lg-6">
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-md-12 col-lg-12">Группа</div>
+        </div>
+        {% for group in profile.user.groups.all %}
+        <div class="row border-bottom rounded">
+            <div class="col-md-12 col-lg-12">{{ group }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-lg-5 mx-4">
+        <div class="row font-weight-bold">Документы {{profile}}</div>
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-md-6 col-lg-6">ФИО</div>
+            <div class="col-md-6 col-lg-6">ИНН</div>
+        </div>
+        {% for doc in user_docs%}
+        <a href="{{doc.get_absolute_url}}">
+            <div class="row border-bottom rounded text-dark">
+                <div class="col-md-6 col-lg-6">{{ doc }}</div>
+                <div class="col-md-6 col-lg-6">{{ doc.INN }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    <div class="col-lg-6 m-0">
+        <div class="row font-weight-bold">Доступные документы {{profile}}</div>
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-md-6 col-lg-6">ФИО</div>
+            <div class="col-md-6 col-lg-6">ИНН</div>
+        </div>
+        {% for doc in p_acc%}
+        <a href="{{ doc.doc_id.get_absolute_url }}">
+            <div class="row border-bottom rounded text-dark">
+                <div class="col-md-6 col-lg-6">{{ doc.doc_id }}</div>
+                <div class="col-md-6 col-lg-6">{{ doc.doc_id.INN }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+{% endblock content_wrapper %}
