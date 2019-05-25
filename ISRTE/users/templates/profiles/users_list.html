@@ -1,49 +1,50 @@
 {% extends "wrapper.html" %}
 {% block content_wrapper %}
 
-
-<div class="row bg-secondary rounded text-light">
-    <div class="col-md col-lg">
-        Логин
+<div class="shadow px-4 py-3 m-n2 border" style="min-height:570px">
+    <div class="row bg-secondary rounded text-light">
+        <div class="col-md col-lg">
+            Логин
+        </div>
+        <div class="col-md col-lg">
+            ФИО
+        </div>
+        <div class="col-md col-lg">
+            Роль
+        </div>
+        {% if user.is_superuser %}
+        <div class="col-md col-lg">
+            Уровень доверия
+        </div>
+        {% endif %}
+        {% if perms.auth %}
+        <div class="col-md col-lg">
+            Действие
+        </div>
+        {% endif %}
     </div>
-    <div class="col-md col-lg">
-        ФИО
+    {% for user in users %}
+    <div class="row">
+        <div class="col-md col-lg">
+            <a class="text-muted" href="{{ user.get_absolute_url }}">{{ user.user }}</a>
+        </div>
+        <div class="col-md col-lg">
+            <a class="text-muted" href="#">{{ user.user.last_name }} {{ user.user.first_name }}</a></h2>
+        </div>
+        <div class="col-md col-lg">
+            {{ user.role_id }}
+        </div>
+        {% if request.user.is_superuser %}
+        <div class="col-md col-lg">
+            {{ user.trust_level_id }}
+        </div>
+        {% endif %}
+        {% if perms.auth %}
+        <div class="col-md col-lg">
+            ыв
+        </div>
+        {% endif %}
     </div>
-    <div class="col-md col-lg">
-        Роль
-    </div>
-    {% if user.is_superuser %}
-    <div class="col-md col-lg">
-        Уровень доверия
-    </div>
-    {% endif %}
-    {% if perms.auth %}
-    <div class="col-md col-lg">
-        Действие
-    </div>
-    {% endif %}
+    {% endfor %}
 </div>
-{% for user in users %}
-<div class="row">
-    <div class="col-md col-lg">
-        <a class="text-muted" href="{{ user.get_absolute_url }}">{{ user.user }}</a>
-    </div>
-    <div class="col-md col-lg">
-        <a class="text-muted" href="#">{{ user.user.last_name }} {{ user.user.first_name }}</a></h2>
-    </div>
-    <div class="col-md col-lg">
-        {{ user.role_id }}
-    </div>
-    {% if request.user.is_superuser %}
-    <div class="col-md col-lg">
-        {{ user.trust_level_id }}
-    </div>
-    {% endif %}
-    {% if perms.auth %}
-    <div class="col-md col-lg">
-        ыв
-    </div>
-    {% endif %}
-</div>
-{% endfor %}
 {% endblock content_wrapper %}

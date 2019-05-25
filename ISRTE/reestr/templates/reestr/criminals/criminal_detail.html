@@ -11,7 +11,7 @@
 
 {% block content_wrapper %}
 
-<div class="row border rounded mb-5">
+<div class="row border px-2 py-2 pb-5 shadow mb-5">
     <!-- ФИО -->
     <div class="col-lg-12">
         <div class="row">
@@ -30,15 +30,15 @@
         </div>
     </div>
     <!-- навбар -->
-    <div class="col-lg-3 border-top border-right">
+    <div class="col-lg-3">
         <div class="row mb-2 mt-2 justify-content-center bg-dark pt-2 pb-2 rounded">
             <div>
-                <img src="{% static 'homepage/images/no_photo.jpg' %}" class="rounded border" width="300"
+                <img src="{% static 'homepage/images/no_photo.jpg' %}" class="rounded " width="290"
                      height="300">
             </div>
         </div>
         <hr>
-        {% if not request.user.profile.role_id.role_type == 'staff' %}
+        {% if request.user.is_superuser or perms.reestr.change_criminals %}
         <div class="row px-2 pt-2 pb-2 bg-dark rounded">
             <hr>
 
@@ -52,19 +52,27 @@
     <!-- досье -->
     {% include "reestr/criminals/includes/include_criminal_dosye.html"%}
     <!-- информация -->
-    <div class="col-lg-2 border-left border-top pt-2">
+    <div class="col-lg-2 pt-2">
         {% if not criminal.check %}
-        {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head'%}
+        {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head' %}
         <a href="{{ criminal.get_criminal_check_url }}" class="btn btn-success btn-block ">Подтвердить</a>
         {% endif %}
         {% endif %}
-        {% if criminal.owner == request.user.profile or request.user.is_superuser %}
-        <a href="{{ criminal.get_update_url }}" class="btn btn-success btn-block ">Редактировать</a>
+        {% if perms.reestr.change_criminals %}
+        <a href="{{ criminal.get_update_url }}" class="btn btn-outline-primary btn-sm">
+            <img src="{% static 'access/icon_redacting.png' %}" alt="Редактировать">
+        </a>
         {% endif %}
         {% if request.user.is_superuser %}
-        <a href="{{ criminal.get_delete_url}}" class="btn btn-danger btn-block ">Удалить</a>
+        <a href="{{ criminal.get_delete_url}}" class="btn btn-outline-danger btn-sm ">
+            <img src="{% static 'access/icon_delete.png'%}" alt="Удалить">
+        </a>
         {% endif %}
-        <a href="#" class="btn btn-success btn-block ">Печать</a>
+        {% if perms.reestr %}
+        <a href="#" class="btn btn-success btn-sm">
+            <img src="{% static 'access/icon_delete2.png'%}" alt="Печать">
+        </a>
+        {% endif %}
         <br>
         <div class="row m-0 p-0">
             <span class="mx-2">Владелец:</span>

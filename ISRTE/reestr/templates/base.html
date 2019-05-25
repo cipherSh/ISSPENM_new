@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
 </head>
 
-<body class="">
+<body class="p-3">
     <div class="container-fluid pt-4 p-0">
 
         <header class="blog-header fixed-top bg-dark font-weight-normal text-light">
@@ -21,13 +21,13 @@
 
         <br>
 
-        <div class="container-fluid mt-4 px-5" style="min-height:700px">
+        <div class="container-fluid px-5" style="min-height:700px">
             {% block content %}
 
             {% endblock content %}
         </div>
 
-        <footer class="container-fluid mt-1 bg-dark">
+        <footer class="container-fluid rounded lh-100 p-4 mt-2 border border-primary bg-dark">
             {% if user.is_staff %}
             <a href="/admin/">Панель администратора</a>
             {% endif %}

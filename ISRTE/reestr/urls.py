@@ -46,7 +46,8 @@ urlpatterns = [
 
     path('registry/manhunt/', views.manhunt_list, name="manhunt_list_url"),
     path('registry/manhunt/<int:pk>', views.manhunt_detail, name="manhunt_detail_url"),
-    path('registry/manhunt/<int:pk>/update', views.ManhuntUpdateView.as_view(), name="manhunt_update_url")
+    path('registry/manhunt/<int:pk>/update', views.ManhuntUpdateView.as_view(), name="manhunt_update_url"),
+    path('registry/manhunt/<int:pk>/delete', views.ManhuntDeleteView.as_view(), name="manhunt_delete_url")
 
 
 ]

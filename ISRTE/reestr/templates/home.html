@@ -2,29 +2,105 @@
 {% block title %} Информационная система учета террористов и экстремистов ОПКК МВД КР {% endblock %}
 {% block content %}
 
-<br>
-<br>
-<br>
-<div class="row navbar navbar-expand-lg mt-5 mx-auto">
-    <p class="navbar navbar-brand font-weight-light">
-    <h2>Информационная система учета террористов и экстремистов МВД КР</h2></p>
-</div>
 
-<div class="mt-5">
-    <form action="/persons/search/" method="get">
-        <div class="row form-group">
-            <div class="col-lg-12 m-0">
-                <input type="text" class="form-control" name="text">
-            </div>
-            <br>
-            <br>
-            <div class="col-lg-12 m-0">
-                <input type="submit" class="btn btn-block btn-outline-primary" value="Поиск">
+<main role="main" class="container rounded shadow py-1 mt-5 mb-5">
+    <div class="container text-center mt-5 mb-5"><h2 class="">Информационная система учета террористов и экстремистов
+        ОПКК МВД КР</h2></div>
+    <div class="align-items-center p-3 my-3 text-white-50 bg-purple rounded">
+        <div class="">
+            <form action="/persons/search/" method="get">
+                <div class="row form-group">
+                    <div class="col-lg-10 m-0">
+                        <input type="text" class="form-control" name="text">
+                    </div>
+                    <div class="col-lg-2 m-0">
+                        <input type="submit" class="btn btn-block btn-primary" value="Поиск">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if df %}
+    <div class="my-3 p-3 bg-white rounded border box-shadow">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Recent updates</h6>
+        <div class="media text-muted pt-3">
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">@username</strong>
+            </p>
+        </div>
+        <small class="d-block text-right mt-3">
+            <a href="#">All updates</a>
+        </small>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Suggestions</h6>
+
+        <div class="media text-muted pt-3">
+            <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="32x32"
+                 class="mr-2 rounded"
+                 src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16ae9d7106b%20text%20%7B%20fill%3A%23007bff%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A2pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16ae9d7106b%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23007bff%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2211.546875%22%20y%3D%2216.9%22%3E32x32%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
+                 data-holder-rendered="true" style="width: 32px; height: 32px;">
+            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <strong class="text-gray-dark">Full Name</strong>
+                    <a href="#">Follow</a>
+                </div>
+                <span class="d-block">@username</span>
             </div>
         </div>
-    </form>
-</div>
-<br><br>
+        <small class="d-block text-right mt-3">
+            <a href="#">All suggestions</a>
+        </small>
+    </div>
+    {% endif %}
+</main>
+
+<main role="static" class="container">
+    <p class="text-dark pb-3 mb-0 d-block lh-125 h6">Статистика:</p>
+    <div class="row">
+        <div class="col mx-2 p-3 rounded shadow">
+            <h6 class="pb-2 mb-0">Досье</h6>
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{terr}} по МЭО</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+            <p class="pb-3 mb-0 small border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{terr}} по МТО</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+            <p class="pb-3 mb-0 small">
+                <strong class="d-block text-gray-dark">{{persons}} граждан</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+        </div>
+        <div class="col mx-2 p-3 rounded shadow">
+            <h6 class="pb-2 mb-0">Дела</h6>
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{case}} уголовных дел</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{manhunt}} розыскных дел</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+        </div>
+        <div class="col mx-2 p-3 rounded shadow">
+            <h6 class="pb-2 mb-0">Пользователи</h6>
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{active}} активных</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+            <p class="media-body pb-3 mb-0 small lh-125">
+                <strong class="d-block text-gray-dark">{{deactive}} неактивных</strong>
+                <span><a href="">Просмотреть</a></span>
+            </p>
+        </div>
+    </div>
+
+</main>
+
+{%if a%}
 <div class="row mt-5 lead mt-5 mx-5">
     <div class="col-lg-12 font-weight-light">
         <div class="row lead">В системе зарегистрировано:</div>
@@ -52,9 +128,9 @@
             <div class="col-lg-1"></div>
             <div class="col-lg-2"><span class="text-primary">{{profile}} </span>пользователей:</div>
             <div class="col-lg-2 text-primary">{{active}} активных</div>
-            <div class="col-lg-2 text-primary">{{deactive}} не активных</div>
+            <div class="col-lg-2 text-primary">{{deactive}} неактивных</div>
         </div>
     </div>
 </div>
-
+{% endif %}
 {% endblock content %}

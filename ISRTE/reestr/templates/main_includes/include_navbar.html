@@ -24,9 +24,11 @@
                 <a class="nav-link" href="{% url 'group_list_url' %}">Группы</a>
             </li>
             {% endif %}
+            {% if perms.access %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'group_list_url' %}">Управление доступом</a>
+                <a class="nav-link" href="{% url 'control_access_url' %}">Управление доступом</a>
             </li>
+            {% endif %}
         </ul>
     </div>
 </nav>

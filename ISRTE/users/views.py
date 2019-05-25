@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 
 #models
 from .models import Profile
@@ -53,7 +53,7 @@ def user_profile(request, pk):
     context = {
         'profile': profile,
         'user_docs': user_docs,
-
+        'wrapper_title': "Профиль пользователя",
         #'p_acc': p_acc
     }
     return render(request, 'profiles/user_profile.html', context=context)
@@ -68,3 +68,16 @@ def group_list(request):
         "groups": groups
     }
     return render(request, "profiles/group_list.html", context=context)
+
+
+def inactive_user(request, pk):
+    profile = Profile.objects.get(id=pk)
+    print(profile.user.is_active)
+    if profile.user.is_active:
+        profile.user.is_active = False
+        print(profile.user.is_active)
+        profile.user.save()
+    else:
+        profile.user.is_active = True
+        profile.user.save()
+    return redirect(profile)

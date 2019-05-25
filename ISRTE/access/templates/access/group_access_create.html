@@ -1,23 +1,33 @@
 {% extends "wrapper.html" %}
 
 {% block content_wrapper %}
-    <form action="{% url 'group_access_create_url' pk=criminal.id %}" method="post">
-
+{% if criminal %}
+<form action="{% url 'group_access_create_url' pk=criminal.id %}" method="post">
+    {% else %}
+    <form action="{% url 'group_access_update_url' pk=doc.id %}" method="post">
+        {% endif %}
         <p>Групповой доступ к досье <b>{{ criminal }}</b></p>
         {% csrf_token %}
         {% for field in form %}
 
-            {% if field.error %}
-                {{ field.error }}
-            {% endif %}
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-lg-3">{{field.label}}</div>
-                    <div class="col-lg-6">{{field}}</div>
-                </div>
+        {% if field.error %}
+        {{ field.error }}
+        {% endif %}
+        <div class="form-group">
+            <div class="row">
+                <div class="col-lg-3">{{field.label}}</div>
+                <div class="col-lg-6">{{field}}</div>
             </div>
+        </div>
         {% endfor %}
         <br>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <div class="col-md-4 col-lg-2 p-0">
+            <button type="submit" class="btn btn-primary btn-block">Сохранить</button>
+        </div>
     </form>
+    {% if not criminal %}
+    <div class="col-md-4 col-lg-2 p-0 mt-2">
+        <a href="{% url 'group_access_delete_url' pk=doc.id %}" class="btn btn-danger btn-block">Удалить</a>
+    </div>
+    {% endif %}
 {% endblock %}

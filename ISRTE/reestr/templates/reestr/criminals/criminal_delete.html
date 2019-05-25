@@ -1,7 +1,7 @@
 {% extends "wrapper.html" %}
 
 {% block content_wrapper %}
-
+{% if criminal %}
 <form action="{{ criminal.get_delete_url }}" method="post">
     {% csrf_token %}
 
@@ -11,5 +11,18 @@
     <button type="submit" name="button" class="btn btn-danger round">Удалить</button>
 
 </form>
+{% endif %}
+
+{% if manhunt %}
+<form action="{{ manhunt.get_delete_url }}" method="post">
+    {% csrf_token %}
+
+    <h3>Вы уверены, что хотите удалить розыскное дело №<b>{{ manhunt }}</b>?</h3>
+    <br>
+    <a href="{{ manhunt.get_absolute_url }}" class="btn btn-primary">Отмена</a>
+    <button type="submit" name="button" class="btn btn-danger round">Удалить</button>
+
+</form>
+{% endif %}
 
 {% endblock %}

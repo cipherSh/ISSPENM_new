@@ -130,7 +130,7 @@ class Criminals(models.Model):
     owner = models.ForeignKey(Profile, verbose_name='Владелец', related_name="Owner", on_delete=models.SET_NULL,
                               null=True)
     close = models.BooleanField(verbose_name="Закрыть доступ", default=False)
-    confident = models.ForeignKey(TrustLevel, on_delete=models.PROTECT, null=True, blank=True,
+    confident = models.ForeignKey(TrustLevel, on_delete=models.PROTECT, null=True, blank=False,
                                   verbose_name="Уровень секретности")
     check = models.BooleanField(verbose_name='Подтверждение', default=False)
 
@@ -432,6 +432,9 @@ class Manhunt(models.Model):
 
     def get_update_url(self):
         return reverse('manhunt_update_url', kwargs={'pk': self.id})
+
+    def get_delete_url(self):
+        return reverse('manhunt_delete_url', kwargs={'pk': self.id})
 
 
 class Conviction(models.Model):

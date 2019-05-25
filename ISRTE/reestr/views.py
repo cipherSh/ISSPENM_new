@@ -1,5 +1,5 @@
 import re
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -14,12 +14,40 @@ from .forms import CriminalCreateForm, CriminalContactDetailAddForm, CriminalAdd
 from .models import Criminals, Persons, CriminalAddresses, Conviction, Confluence, Contacts, Manhunt, CriminalCase, \
     CriminalCaseCriminals, CriminalsContactPersons, CriminalsRelatives
 
+from users.models import Profile
+from django.contrib.auth.models import User
+from access.models import PersonAccess
+
+# views
+from access.views import determinate_owner_or_superuser, assign_full_access, determinate_have_access, access_determinate
 
 # Create your views here.
 
 @login_required
 def homepage(request):
-    return render(request, 'home.html')
+    criminal = Criminals.objects.all().count()
+    terr = Criminals.objects.filter(occupation=1).count()
+    persons = Persons.objects.all().count()
+    cp = criminal + persons
+    manhunt = Manhunt.objects.all().count()
+    case = CriminalCase.objects.all().count()
+    mc = manhunt + case
+    profile = Profile.objects.all().count()
+    active = User.objects.filter(is_active=True).count()
+    deactive = profile - active
+    context = {
+        'criminal': criminal,
+        'persons': persons,
+        'cp': cp,
+        'terr': terr,
+        'manhunt': manhunt,
+        'case': case,
+        'profile': profile,
+        'active': active,
+        'deactive': deactive,
+        'mc': mc
+    }
+    return render(request, 'home.html', context=context)
 
 
 @login_required
@@ -28,7 +56,12 @@ def registry_page(request):
     wrapper_title = "Реестр"
     criminals = Criminals.objects.order_by('-created')[:10]
     my_docs = Criminals.objects.filter(owner=request.user.profile).order_by('-created')[:10]
-    uncheck_docs = Criminals.objects.filter(check=False).order_by('-created')[:10]
+    if not request.user.is_superuser:
+        uncheck_docs = Criminals.objects.filter(owner=request.user.profile).filter(check=False).order_by(
+            '-created')[:10]
+    else:
+        uncheck_docs = Criminals.objects.filter(check=False).order_by(
+            '-created')[:10]
     search_url = 'criminals_list_url'
 
     context = {
@@ -52,7 +85,11 @@ def criminals_list(request):
     search_query = request.GET.get('search_query_text', '')
 
     if search_query:
-        criminals = Criminals.objects.filter(Q(full_name__icontains=search_query) | Q(INN__icontains=search_query))
+        text = re.split('\W+', search_query)
+        for word in text:
+            criminals = Criminals.objects.filter(Q(last_name__icontains=word) | Q(first_name__icontains=word) |
+                                                 Q(patronymic__icontains=word) | Q(birthday__icontains=word) |
+                                                 Q(INN__icontains=word))
     else:
         criminals = Criminals.objects.all()
     context = {
@@ -74,6 +111,7 @@ def criminal_detail(request, pk):
     conviction = Conviction.objects.filter(criminal_id=criminal)
     manhunt = Manhunt.objects.filter(criminal_id=criminal)
     criminal_case = CriminalCaseCriminals.objects.filter(criminal_id=criminal)
+    pr = PersonAccess.objects.filter(doc_id=criminal).filter(user_id=request.user.profile)
     context = {
         'criminal': criminal,
         'nav_btn_add': 'criminal_create_url',
@@ -85,9 +123,20 @@ def criminal_detail(request, pk):
         'contact_persons': contact_persons,
         'convictions': conviction,
         'manhunt': manhunt,
-        'criminal_case': criminal_case
+        'criminal_case': criminal_case,
+        'access': pr
     }
-    return render(request, 'reestr/criminals/criminal_detail.html', context=context)
+    full_access = determinate_owner_or_superuser(request, criminal)
+
+    if determinate_have_access(request, criminal):
+        if full_access:
+            request = assign_full_access(request)
+        else:
+            request = access_determinate(request, criminal)
+        return render(request, 'reestr/criminals/criminal_detail.html', context=context)
+    return HttpResponse('sorry')
+
+
 
 
 @login_required
@@ -167,7 +216,12 @@ def manhunt_list(request):
 @login_required
 def manhunt_detail(request, pk):
     manhunt = Manhunt.objects.get(id=pk)
-    return render(request, 'reestr/ccase/manhunt-detail.html', context={'manhunt': manhunt})
+    context = {
+        'wrapper_title': "Розыскные дела",
+        'search_url': 'manhunt_list_url',
+        'manhunt': manhunt
+    }
+    return render(request, 'reestr/ccase/manhunt-detail.html', context=context)
 
 
 class CriminalCreateView(View):
@@ -222,7 +276,7 @@ class CriminalUpdateView(View):
 class CriminalDeleteView(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
-        context ={
+        context = {
             'criminal': criminal,
             'wrapper_title': 'Реестр',
         }
@@ -469,3 +523,18 @@ class ManhuntUpdateView(View):
             new_manhunt = bound_form.save()
             return redirect(new_manhunt)
         return render(request, 'reestr/ccase/manhunt_update.html', context=context)
+
+
+class ManhuntDeleteView(View):
+    def get(self, request, pk):
+        manhunt = Manhunt.objects.get(id=pk)
+        context = {
+            'manhunt': manhunt,
+            'wrapper_title': 'Розыскное дело',
+        }
+        return render(request, 'reestr/criminals/criminal_delete.html', context=context)
+
+    def post(self, request, pk):
+        manhunt = Manhunt.objects.get(id=pk)
+        manhunt.delete()
+        return redirect(reverse('manhunt_list_url'))

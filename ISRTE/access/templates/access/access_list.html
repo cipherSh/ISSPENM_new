@@ -1,0 +1,57 @@
+{% extends "wrapper.html" %}
+{% block title %}Управление доступом{% endblock %}
+{% block content_wrapper %}
+<div class="row border p-3 shadow" style="min-height:570px">
+    <div class="col-lg-12" style="margin-right:100px">
+        {% load static %}
+        {% if group_access %}
+
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-md-6 col-lg-6">Досье - Группа</div>
+            <div class="col-md-2 col-lg-2">Добавление</div>
+            <div class="col-md-2 col-lg-2">Редактирование</div>
+            <div class="col-md-2 col-lg-2">Удаление</div>
+        </div>
+
+        <!-- Список террористов -->
+        {% for access in group_access %}
+
+        <div class="row border-bottom">
+            <div class="col-md-6 col-lg-6">
+                <a class="text-muted" href="{{access.get_update_url}}">{{ access }}</a>
+            </div>
+            <div class="col-md-2 col-lg-2">{{ access.add }}</div>
+            <div class="col-md-2 col-lg-2">{{ access.update }}</div>
+            <div class="col-md-2 col-lg-2">{{ access.execute }}</div>
+
+        </div>
+        {% endfor %}
+        <br>
+        {% endif %}
+
+        {% if person_access %}
+        <div class="row border-bottom bg-secondary rounded text-light">
+            <div class="col-md-6 col-lg-6">Досье - Пользователь</div>
+            <div class="col-md-2 col-lg-2">Добавление</div>
+            <div class="col-md-2 col-lg-2">Редактирование</div>
+            <div class="col-md-2 col-lg-2">Удаление</div>
+        </div>
+
+        <!-- Список террористов -->
+        {% for access in person_access %}
+
+        <div class="row border-bottom">
+            <div class="col-md-6 col-lg-6">
+                <a class="text-muted" href="{{access.get_update_url}}">{{ access }}</a>
+            </div>
+            <div class="col-md-2 col-lg-2">{{ access.add_access }}</div>
+            <div class="col-md-2 col-lg-2">{{ access.update }}</div>
+            <div class="col-md-2 col-lg-2">{{ access.execute_access }}</div>
+
+        </div>
+        {% endfor %}
+        <br>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
