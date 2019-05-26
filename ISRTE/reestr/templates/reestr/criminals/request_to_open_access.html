@@ -1,0 +1,45 @@
+{% extends "wrapper.html" %}
+{% load static %}
+{% block show_list %}
+
+<div class="row">
+    <div class="col-lg-10"></div>
+    <div class="col-lg-2"><a href="{% url 'criminals_list_url' %}">Показать весь список</a></div>
+</div>
+{% endblock %}
+
+{% block content_wrapper %}
+{% if not form %}
+<div class="row border p-3 shadow" style="min-height:570px">
+    <div class="col-lg-12 mt-3 pl-5">
+        <h5>Извините у вас нету доступа к досье {{ criminal }}</h5>
+        <div class="row p-5 ">
+            <a href="{% url 'criminals_list_url' %}" class="col-md-5 col-lg-3 mx-2 btn btn-primary btn-sm">Назад</a>
+            <a href="{% url 'request_to_open_pa_url' pk=criminal.id %}" class="col-md-5 col-lg-3 mx-2 btn btn-primary">Запрос индивидуального доступа</a>
+            <a href="" class="col-md-5 col-lg-3 mx-2 btn btn-primary">Запрос на открытие группового доступа</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if form %}
+<form action="{% url 'request_to_open_pa_url' %}" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+
+    {% if field.error %}
+    {{ field.error }}
+    {% endif %}
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-3">{{field.label}}</div>
+            <div class="col-lg-6">{{field}}</div>
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+{% endif %}
+
+{% endblock content_wrapper %}

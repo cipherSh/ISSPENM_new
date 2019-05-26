@@ -12,9 +12,9 @@ from .forms import CriminalCreateForm, CriminalContactDetailAddForm, CriminalAdd
 
 # models
 from .models import Criminals, Persons, CriminalAddresses, Conviction, Confluence, Contacts, Manhunt, CriminalCase, \
-    CriminalCaseCriminals, CriminalsContactPersons, CriminalsRelatives
+    CriminalCaseCriminals, CriminalsContactPersons, CriminalsRelatives, Occupation
 
-from users.models import Profile
+from users.models import Profile, Role
 from django.contrib.auth.models import User
 from access.models import PersonAccess
 
@@ -23,29 +23,65 @@ from access.views import determinate_owner_or_superuser, assign_full_access, det
 
 # Create your views here.
 
+
 @login_required
 def homepage(request):
-    criminal = Criminals.objects.all().count()
-    terr = Criminals.objects.filter(occupation=1).count()
-    persons = Persons.objects.all().count()
-    cp = criminal + persons
-    manhunt = Manhunt.objects.all().count()
-    case = CriminalCase.objects.all().count()
-    mc = manhunt + case
-    profile = Profile.objects.all().count()
-    active = User.objects.filter(is_active=True).count()
-    deactive = profile - active
+    count_criminals = Criminals.objects.all().count()
+    mto = Occupation.objects.get(type_occ='МТО')
+    meo = Occupation.objects.get(type_occ='МЭО')
+    count_terror = Criminals.objects.filter(occupation=mto).count()
+    count_extrem = Criminals.objects.filter(occupation=meo).count()
+    count_persons = Persons.objects.all().count()
+    count_cc = CriminalCase.objects.all().count()
+    count_manhunt = Manhunt.objects.all().count()
+    count_active_users = User.objects.filter(is_active=True).count()
+    count_inactive_users = User.objects.filter(is_active=False).count()
+
+    search_query = request.GET.get('text', '')
+
+    criminals = None
+    cc = None
+    manhunts = None
+    profiles = None
+    users = None
+    roles = None
+
+    if search_query:
+        text = re.split('\W+', search_query)
+        for word in text:
+            criminals = Criminals.objects.filter(Q(last_name__icontains=word) | Q(first_name__icontains=word) |
+                                                 Q(patronymic__icontains=word) | Q(birthday__icontains=word) |
+                                                 Q(INN=word))
+            cc = CriminalCase.objects.filter(Q(number__icontains=word) | Q(year__icontains=word) |
+                                             Q(organ__icontains=word) | Q(date_arousal__icontains=word) | Q(
+                                                                            date_suspension__icontains=word))
+            manhunts = Manhunt.objects.filter(Q(invest_case_number__icontains=word) |
+                                              Q(date_arousal__icontains=word) |
+                                              Q(invest_initiator__icontains=word))
+            if word == 'admin' or word == 'head':
+                roles = Role.objects.get(role_type=word)
+            if roles:
+                profiles = Profile.objects.filter(role_id=roles)
+            users = User.objects.filter(Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(
+                username__icontains=word))
+
+
     context = {
-        'criminal': criminal,
-        'persons': persons,
-        'cp': cp,
-        'terr': terr,
-        'manhunt': manhunt,
-        'case': case,
-        'profile': profile,
-        'active': active,
-        'deactive': deactive,
-        'mc': mc
+        'count_criminals': count_criminals,
+        'count_terror': count_terror,
+        'count_extrem': count_extrem,
+        'count_persons': count_persons,
+        'count_cc': count_cc,
+        'count_manhunt': count_manhunt,
+        'count_active_users': count_active_users,
+        'count_inactive_users': count_inactive_users,
+        'criminals': criminals,
+        'ccase': cc,
+        'manhunts': manhunts,
+        'profiles': profiles,
+        'users': users,
+        'search_text': search_query,
+
     }
     return render(request, 'home.html', context=context)
 
@@ -134,7 +170,7 @@ def criminal_detail(request, pk):
         else:
             request = access_determinate(request, criminal)
         return render(request, 'reestr/criminals/criminal_detail.html', context=context)
-    return HttpResponse('sorry')
+    return render(request, 'reestr/criminals/request_to_open_access.html', context=context)
 
 
 
@@ -202,7 +238,8 @@ def manhunt_list(request):
     search_query = request.GET.get('search_query_text', '')
     if search_query:
         manhunts = Manhunt.objects.filter(Q(invest_case_number__icontains=search_query) |
-                                          Q(date_arousal__icontains=search_query))
+                                          Q(date_arousal__icontains=search_query) |
+                                          Q(invest_initiator__icontains=search_query))
     else:
         manhunts = Manhunt.objects.order_by('date_arousal')
     context = {

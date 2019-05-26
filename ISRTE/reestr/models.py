@@ -184,11 +184,14 @@ class Criminals(models.Model):
     def get_criminal_check_url(self):
         return reverse('criminal_check_url', kwargs={'pk': self.id})
 
-    def get_criminal_change_owner_url(self):#
+    def get_criminal_change_owner_url(self):
         return reverse('criminal_change_owner_url', kwargs={'pk': self.id})
 
-    def get_criminal_confident_change_url(self):#
+    def get_criminal_confident_change_url(self):
         return reverse('criminal_confident_change_url', kwargs={'pk': self.id})
+
+    def get_request_to_open_pa_url(self):
+        return reverse('request_to_open_pa_url', kwargs={'pk': self.id})
 
 
 class Persons(models.Model):

@@ -1,0 +1,33 @@
+{% extends "wrapper.html" %}
+{% load static %}
+{% block show_list %}
+
+<div class="row">
+    <div class="col-lg-10"></div>
+    <div class="col-lg-2"><a href="{% url 'criminals_list_url' %}">Показать весь список</a></div>
+</div>
+{% endblock %}
+
+{% block content_wrapper %}
+
+<form action="{{ criminal.get_request_to_open_pa_url }}" method="post">
+
+    {% csrf_token %}
+    {% for field in form %}
+
+    {% if field.error %}
+    {{ field.error }}
+    {% endif %}
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-3">{{field.label}}</div>
+            <div class="col-lg-6">{{field}}</div>
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+
+
+{% endblock content_wrapper %}

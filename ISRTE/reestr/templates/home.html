@@ -3,12 +3,12 @@
 {% block content %}
 
 
-<main role="main" class="container rounded shadow py-1 mt-5 mb-5">
+<main role="main" class="container shadow py-1 mt-5 mb-5 border">
     <div class="container text-center mt-5 mb-5"><h2 class="">Информационная система учета террористов и экстремистов
         ОПКК МВД КР</h2></div>
     <div class="align-items-center p-3 my-3 text-white-50 bg-purple rounded">
         <div class="">
-            <form action="/persons/search/" method="get">
+            <form action="{% url 'homepage_url' %}" method="get">
                 <div class="row form-group">
                     <div class="col-lg-10 m-0">
                         <input type="text" class="form-control" name="text">
@@ -20,19 +20,9 @@
             </form>
         </div>
     </div>
-    {% if df %}
-    <div class="my-3 p-3 bg-white rounded border box-shadow">
-        <h6 class="border-bottom border-gray pb-2 mb-0">Recent updates</h6>
-        <div class="media text-muted pt-3">
-            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <strong class="d-block text-gray-dark">@username</strong>
-            </p>
-        </div>
-        <small class="d-block text-right mt-3">
-            <a href="#">All updates</a>
-        </small>
-    </div>
 
+
+    {% if not search_text %}
     <div class="my-3 p-3 bg-white rounded box-shadow">
         <h6 class="border-bottom border-gray pb-2 mb-0">Suggestions</h6>
 
@@ -56,43 +46,148 @@
     {% endif %}
 </main>
 
-<main role="static" class="container">
+{% if criminals %}
+<main role="main" class="container rounded shadow py-1 mt-5 mb-5 border">
+    <div class="my-2 p-2 bg-white rounded box-shadow">
+        <h6 class="pb-2 mb-0">Досье</h6>
+        <div class="text-muted pt-3">
+            {% for criminal in criminals %}
+            <div class="row border-bottom mx-2 mb-2">
+                <div class="col-lg-4">{{ criminal }}</div>
+                <div class="col-lg-2 text-right">{{ criminal.INN}}</div>
+                <div class="col-lg-2 text-right">{{ criminal.birthday }}</div>
+                <div class="col-lg-2 text-right">{{ criminal.occupation}}</div>
+                <div class="col-lg-2 text-right"><a href="{{ criminal.get_absolute_url }}">Посмотреть</a></div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+        <small class="d-block text-right mt-3">
+            <a href="{% url 'criminals_list_url' %}">Весь список</a>
+        </small>
+    </div>
+</main>
+{% endif %}
+
+{% if ccase %}
+<main role="main" class="container shadow py-1 mt-5 mb-5 border">
+    <div class="my-2 p-2 bg-white rounded box-shadow">
+        <h6 class="pb-2 mb-0">Уголовные дела</h6>
+        <div class="text-muted pt-3">
+            {% for case in ccase %}
+            <div class="row border-bottom mx-2 mb-2">
+                <div class="col-lg-2">{{ case }}</div>
+                <div class="col-lg-3 text-right">{{ case.organ}}</div>
+                <div class="col-lg-3 text-right">{{ case.date_arousal }}</div>
+                <div class="col-lg-2 text-right">{{ case.date_suspension }}</div>
+                <div class="col-lg-2 text-right"><a href="{{ case.get_absolute_url }}">Посмотреть</a></div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+        <small class="d-block text-right mt-3">
+            <a href="{% url 'cc_list_url' %}">Весь список</a>
+        </small>
+    </div>
+</main>
+{% endif %}
+
+{% if manhunts %}
+<main role="main" class="container shadow py-1 mt-5 mb-5 border">
+    <div class="my-2 p-2 bg-white rounded box-shadow">
+        <h6 class="pb-2 mb-0">Розыскные дела</h6>
+        <div class="text-muted pt-3">
+            {% for manhunt in manhunts %}
+            <div class="row border-bottom mx-2 mb-2">
+                <div class="col-lg-2">{{ manhunt }}</div>
+                <div class="col-lg-4 text-right">{{ manhunt.criminal_id }}</div>
+                <div class="col-lg-2 text-right">{{ manhunt.date_arousal }}</div>
+                <div class="col-lg-2 text-right">{{ manhunt.invest_initiator }}</div>
+                <div class="col-lg-2 text-right"><a href="{{ manhunt.get_absolute_url }}">Посмотреть</a></div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+        <small class="d-block text-right mt-3">
+            <a href="{% url 'manhunt_list_url' %}">Весь список</a>
+        </small>
+    </div>
+</main>
+{% endif %}
+
+{% if profiles or users %}
+<main role="main" class="container shadow py-1 mt-5 mb-5 border">
+    <div class="my-2 p-2 bg-white rounded box-shadow">
+        <h6 class="pb-2 mb-0">Пользователи</h6>
+        <div class="text-muted pt-3">
+            {% for profile in profiles %}
+            <div class="row border-bottom mx-2 mb-2">
+                <div class="col-lg-4">{{ profile }}</div>
+                <div class="col-lg-2 text-right">{{ profile.user }}</div>
+                <div class="col-lg-2 text-right">{{ profile.role_id}}</div>
+                <div class="col-lg-2 text-right">{{ profile.user.is_active }}</div>
+                <div class="col-lg-2 text-right"><a href="{{ profile.get_absolute_url }}">Посмотреть</a></div>
+            </div>
+
+            {% endfor %}
+            {% for user in users %}
+            <div class="row border-bottom mx-2 mb-2">
+                <div class="col-lg-4">{{ user.profile }}</div>
+                <div class="col-lg-2 text-right">{{ user}}</div>
+                <div class="col-lg-2 text-right">{{ user.profile.role_id }}</div>
+                <div class="col-lg-2 text-right">{% if user.is_active %}Активный{% else %}Не активный{% endif %}</div>
+                <div class="col-lg-2 text-right"><a href="{{ user.profile.get_absolute_url }}">Посмотреть</a></div>
+            </div>
+
+            {% endfor %}
+        </div>
+        <small class="d-block text-right mt-3">
+            <a href="{% url 'users_list_url' %}">Весь список</a>
+        </small>
+    </div>
+</main>
+{% endif %}
+
+<main role="static" class="container mb-5" style="margin-top:100px" >
     <p class="text-dark pb-3 mb-0 d-block lh-125 h6">Статистика:</p>
     <div class="row">
         <div class="col mx-2 p-3 rounded shadow">
             <h6 class="pb-2 mb-0">Досье</h6>
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <strong class="d-block text-gray-dark">{{terr}} по МЭО</strong>
+                <strong class="d-block text-gray-dark">{{ count_extrem }} по МЭО</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
             <p class="pb-3 mb-0 small border-bottom border-gray">
-                <strong class="d-block text-gray-dark">{{terr}} по МТО</strong>
+                <strong class="d-block text-gray-dark">{{ count_terror }} по МТО</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
             <p class="pb-3 mb-0 small">
-                <strong class="d-block text-gray-dark">{{persons}} граждан</strong>
+                <strong class="d-block text-gray-dark">{{ count_persons }} граждан</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
         </div>
         <div class="col mx-2 p-3 rounded shadow">
             <h6 class="pb-2 mb-0">Дела</h6>
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <strong class="d-block text-gray-dark">{{case}} уголовных дел</strong>
+                <strong class="d-block text-gray-dark">{{ count_cc }} уголовных дел</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <strong class="d-block text-gray-dark">{{manhunt}} розыскных дел</strong>
+                <strong class="d-block text-gray-dark">{{ count_manhunt }} розыскных дел</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
         </div>
         <div class="col mx-2 p-3 rounded shadow">
             <h6 class="pb-2 mb-0">Пользователи</h6>
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <strong class="d-block text-gray-dark">{{active}} активных</strong>
+                <strong class="d-block text-gray-dark">{{ count_active_users }} активных</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
             <p class="media-body pb-3 mb-0 small lh-125">
-                <strong class="d-block text-gray-dark">{{deactive}} неактивных</strong>
+                <strong class="d-block text-gray-dark">{{ count_inactive_users }} неактивных</strong>
                 <span><a href="">Просмотреть</a></span>
             </p>
         </div>
@@ -100,37 +195,5 @@
 
 </main>
 
-{%if a%}
-<div class="row mt-5 lead mt-5 mx-5">
-    <div class="col-lg-12 font-weight-light">
-        <div class="row lead">В системе зарегистрировано:</div>
-    </div>
-    <div class="col-lg-12">
-        <div class="row font-weight-light">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-2"><span class="text-primary">{{cp}} </span>человек:</div>
-            <div class="col-lg-2 text-primary">{{terr}} по МТО</div>
-            <div class="col-lg-2 text-primary">{{terr}} по МЭО</div>
-            <div class="col-lg-2 text-primary">{{persons}} граждан</div>
-        </div>
-    </div>
 
-    <div class="col-lg-12">
-        <div class="row font-weight-light">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-2"><span class="text-primary">{{mc}} </span>дел:</div>
-            <div class="col-lg-2 text-primary">{{case}} уголовных дел</div>
-            <div class="col-lg-2 text-primary">{{manhunt}} розыскных дел</div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="row font-weight-light">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-2"><span class="text-primary">{{profile}} </span>пользователей:</div>
-            <div class="col-lg-2 text-primary">{{active}} активных</div>
-            <div class="col-lg-2 text-primary">{{deactive}} неактивных</div>
-        </div>
-    </div>
-</div>
-{% endif %}
 {% endblock content %}

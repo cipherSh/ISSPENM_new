@@ -1,5 +1,5 @@
 from django import forms
-from .models import GroupAccess, PersonAccess
+from .models import GroupAccess, PersonAccess, RequestToOpen
 
 
 class GroupAccessForm(forms.ModelForm):
@@ -37,4 +37,13 @@ class PersonalAccessUpdateForm(forms.ModelForm):
         widgets = {
             'user_id': forms.Select(attrs={'class': 'form-control'}),
             'doc_id': forms.Select(attrs={'class': 'form-control'})
+        }
+
+
+class RequestToOpenAccessForm(forms.ModelForm):
+    class Meta:
+        model = RequestToOpen
+        fields = ['reason_open']
+        widgets = {
+            'reason_open': forms.Textarea(attrs={'class': 'form-control'})
         }

@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from datetime import datetime
 
-from .forms import GroupAccessForm, PersonalAccessForm, GroupAccessUpdateForm, PersonalAccessUpdateForm
+from .forms import GroupAccessForm, PersonalAccessForm, GroupAccessUpdateForm, PersonalAccessUpdateForm, \
+    RequestToOpenAccessForm
 
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -124,6 +126,38 @@ def personal_access_delete(request, pk):
     return redirect('/access/')
 
 
+class RequestToOpenPersonalAccess(View):
+    def get(self, request, pk):
+        criminal = Criminals.objects.get(id=pk)
+        form = RequestToOpenAccessForm()
+        context = {
+            'criminal': criminal,
+            'form': form
+        }
+        return render(request, 'reestr/criminals/request_to_open_pa.html', context=context)
+
+    def post(self, request, pk):
+        criminal = Criminals.objects.get(id=pk)
+        bound_form = RequestToOpenAccessForm(request.POST)
+
+        if bound_form.is_valid():
+            new_request = bound_form.save(commit=False)
+            new_request.doc = criminal
+            new_request.group = False
+            new_request.user_id = request.user.profile
+            new_request.check = False
+            new_request.accept = False
+            new_request.date_request = datetime.now()
+            new_request.save()
+            return redirect(criminal)
+
+        context = {
+            'criminal': criminal,
+            'form': bound_form
+        }
+        return render(request, 'reestr/criminals/request_to_open_pa.html', context=context)
+
+
 class GroupAccessCreate(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -137,12 +171,11 @@ class GroupAccessCreate(View):
         if bound_form.is_valid():
             new_access = bound_form.save(commit=False)
             new_access.doc_id = criminal
-            if GroupAccess.objects.filter(group_id=new_access.group_id).filter(doc_id=new_access.doc_id):
-                gr = GroupAccess.objects.filter(group_id=new_access.group_id).filter(doc_id=new_access.doc_id)
-                return redirect('/access/group/<int:pk>/', pk=gr.id)
-            else:
-                new_access.save()
-                return redirect(criminal)
+            old_access = GroupAccess.objects.filter(doc_id=new_access.doc_id).filter(group_id=new_access.group_id)
+            if old_access:
+                old_access.delete()
+            new_access.save()
+            return redirect(criminal)
         return render(request, 'access/group_access_create.html', context={'form': bound_form, 'criminal': criminal})
 
 
@@ -159,6 +192,9 @@ class PersonalAccessCreate(View):
         if bound_form.is_valid():
             new_access = bound_form.save(commit=False)
             new_access.doc_id = criminal
+            old_access = PersonAccess.objects.filter(doc_id=new_access.doc_id).filter(user_id=new_access.user_id)
+            if old_access:
+                old_access.delete()
             new_access.save()
             return redirect(criminal)
         return render(request, 'access/personal_access_create.html', context={'form': bound_form, 'criminal': criminal})
