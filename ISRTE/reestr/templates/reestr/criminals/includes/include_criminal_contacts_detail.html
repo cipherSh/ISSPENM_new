@@ -4,14 +4,25 @@
             <div class="text-light"><h4>Контактные данные</h4></div>
         </div>
         <div class="row border-bottom rounded font-weight-bold">
-            <div class="col-lg-6">Тип контакта</div>
-            <div class="col-lg-6">Контакт</div>
+            <div class="col-lg-4">Тип контакта</div>
+            <div class="col-lg-4">Контакт</div>
         </div>
         {% for contact in contacts_detail %}
         <div class="row border-bottom rounded">
-            <div class="col-lg-6">{{contact.type_contact}}</div>
-            <div class="col-lg-6">{{contact.contact}}</div>
+            <div class="col-lg-4">{{contact.type_contact}}</div>
+            <div class="col-lg-4">{{contact.contact}}</div>
         </div>
         {% endfor %}
+        {% if similar %}
+        {% for sim in similar %}
+        {% for contact in sim.contacts_detail %}
+        <div class="row border-bottom rounded">
+            <div class="col-lg-4">{{contact.type_contact}}</div>
+            <div class="col-lg-5">{{contact.contact}}</div>
+            <div class="col-lg-3 text-right">{{sim.man}}</div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
     </div>
 </div>

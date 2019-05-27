@@ -10,6 +10,11 @@ class CriminalCreateForm(forms.ModelForm):
                   'birth_District', 'birth_City', 'birth_Village', 'gender', 'citizenship', 'INN', 'passport_serial',
                   'passport_number', 'issue_organ', 'issue_data', 'education', 'education_place', 'profession',
                   'marital_status', 'occupation', 'status', 'image', 'organization', 'remarks', 'close', 'confident']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control'}),
+            'confident': forms.Select(attrs={'class': 'form-control'})
+        }
 
 
 class PersonsCreateForm(forms.ModelForm):

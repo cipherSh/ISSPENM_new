@@ -16,7 +16,7 @@ from .models import Criminals, Persons, CriminalAddresses, Conviction, Confluenc
 
 from users.models import Profile, Role
 from django.contrib.auth.models import User
-from access.models import PersonAccess
+from access.models import PersonAccess, RequestToOpen
 
 # views
 from access.views import determinate_owner_or_superuser, assign_full_access, determinate_have_access, access_determinate
@@ -64,7 +64,7 @@ def homepage(request):
                 profiles = Profile.objects.filter(role_id=roles)
             users = User.objects.filter(Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(
                 username__icontains=word))
-
+    my_requests = RequestToOpen.objects.filter(user_id=request.user.profile).filter(check=True).order_by('-date_check')
 
     context = {
         'count_criminals': count_criminals,
@@ -81,6 +81,7 @@ def homepage(request):
         'profiles': profiles,
         'users': users,
         'search_text': search_query,
+        'my_requests': my_requests,
 
     }
     return render(request, 'home.html', context=context)
@@ -92,6 +93,11 @@ def registry_page(request):
     wrapper_title = "Реестр"
     criminals = Criminals.objects.order_by('-created')[:10]
     my_docs = Criminals.objects.filter(owner=request.user.profile).order_by('-created')[:10]
+    docs_requests = []
+    docs_requests_group = []
+    for my_doc in my_docs:
+        docs_requests = RequestToOpen.objects.filter(doc=my_doc).filter(group_id=None).filter(check=False).order_by('-date_request')
+        docs_requests_group = RequestToOpen.objects.filter(doc=my_doc).filter(group_id=not None).filter(check=False).order_by('-date_request')
     if not request.user.is_superuser:
         uncheck_docs = Criminals.objects.filter(owner=request.user.profile).filter(check=False).order_by(
             '-created')[:10]
@@ -104,6 +110,8 @@ def registry_page(request):
         'criminals': criminals,
         'my_docs': my_docs,
         'uncheck_docs': uncheck_docs,
+        'docs_requests': docs_requests,
+        'docs_requests_group': docs_requests_group,
         'nav_btn_add': nav_btn_add,
         'wrapper_title': wrapper_title,
         'recent': True,
@@ -148,8 +156,11 @@ def criminal_detail(request, pk):
     manhunt = Manhunt.objects.filter(criminal_id=criminal)
     criminal_case = CriminalCaseCriminals.objects.filter(criminal_id=criminal)
     pr = PersonAccess.objects.filter(doc_id=criminal).filter(user_id=request.user.profile)
+    similar = similar_criminal(request, criminal)
+
     context = {
         'criminal': criminal,
+        'similar': similar,
         'nav_btn_add': 'criminal_create_url',
         'wrapper_title': "Реестр",
         'search_url': 'criminals_list_url',
@@ -162,6 +173,7 @@ def criminal_detail(request, pk):
         'criminal_case': criminal_case,
         'access': pr
     }
+
     full_access = determinate_owner_or_superuser(request, criminal)
 
     if determinate_have_access(request, criminal):
@@ -173,6 +185,23 @@ def criminal_detail(request, pk):
     return render(request, 'reestr/criminals/request_to_open_access.html', context=context)
 
 
+def similar_criminal(request, criminal):
+    similar = Criminals.objects.filter(INN__icontains=criminal.INN)
+    temp = []
+    for sim in similar:
+        if not sim == criminal:
+            temp.append(sim)
+    similar = temp
+    mans = []
+    contacts_detail = None
+    for sim in similar:
+        contacts_detail = Contacts.objects.filter(criminal_id=sim)
+        temp = {
+            'man': sim,
+            'contacts_detail': contacts_detail
+        }
+        mans.append(temp)
+    return mans
 
 
 @login_required

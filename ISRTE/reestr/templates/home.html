@@ -23,7 +23,7 @@
 
 
     {% if not search_text %}
-    <div class="my-3 p-3 bg-white rounded box-shadow">
+    <div class="my-3 mb-5 p-3 bg-white rounded box-shadow">
         <h6 class="border-bottom border-gray pb-2 mb-0">Suggestions</h6>
 
         <div class="media text-muted pt-3">
@@ -45,6 +45,48 @@
     </div>
     {% endif %}
 </main>
+
+
+{% if my_requests %}
+<main role="main" class="container border shadow mt-5 bg-light">
+    <div class="row">
+        <div class="col text-center mb-4">
+            <p class="h4">Мои запросы</p>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <br>
+        {% for req in my_requests %}
+        <div class="col-lg-5 rounded border m-0 shadow my-2 mx-4 ml-5 bg-white">
+            <h6 class="pb-2 mb-0">{{req.doc}}</h6>
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{% if req.group_id %}Групповой доступ{% else %}Индивидуальный доступ{% endif %}</strong>
+            </p>
+            {% if req.group_id %}
+            <p class="pb-3 mb-0 small border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{ req.group_id }}</strong>
+            </p>
+            {% endif %}
+            {% if req.accept %}
+            <p class="pb-3 mb-0 small">
+                <strong class="d-block text-gray-dark">Одобрено</strong>
+            </p>
+            {% else %}
+            <p class="pb-3 mb-0 small">
+                <strong class="d-block text-gray-dark">Отклонено</strong>
+            </p>
+            {% endif %}
+            {% if req.reason_reject %}
+            <p class="pb-3 mb-0 small">
+                <small class="d-block text-gray-dark">{{ req.reason_reject }}</small>
+            </p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endif %}
+
 
 {% if criminals %}
 <main role="main" class="container rounded shadow py-1 mt-5 mb-5 border">
@@ -151,7 +193,7 @@
 </main>
 {% endif %}
 
-<main role="static" class="container mb-5" style="margin-top:100px" >
+<main role="static" class="container mb-5" style="margin-top:100px">
     <p class="text-dark pb-3 mb-0 d-block lh-125 h6">Статистика:</p>
     <div class="row">
         <div class="col mx-2 p-3 rounded shadow">

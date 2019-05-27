@@ -1,0 +1,32 @@
+{% load static %}
+{% if docs_requests_group %}
+<!-- Для подтверждение-->
+<div class="row mx-2">
+    <div class=""><a  class="text-dark"><!--href="{{criminal.get_absolute_url}}"--><h4>Запросы для группового доступа</h4></a>
+    </div>
+</div>
+
+<div class="row border-bottom bg-secondary rounded text-light">
+    <div class="col-md-4 col-lg-3">Группа</div>
+    <div class="col-md-4 col-lg-4">Документ</div>
+    <div class="col-md-3 col-lg-2">Дата</div>
+    <div class="col-md-2 col-lg-3"></div>
+</div>
+
+<!-- Список террористов -->
+{% for doc in docs_requests_group %}
+
+<div class="row border-bottom small">
+    <div class="col-md-4 col-lg-3">
+        <a class="text-muted" href="{{ doc.user_id.get_absolute_url }}">{{doc.group_id}} ({{doc.user_id}})</a>
+    </div>
+    <div class="col-md-3 col-lg-4">{{ doc.doc }}({{doc.doc.confident}})</div>
+    <div class="col-md-2 col-lg-2 ">{{ doc.date_request }}</div>
+    <div class="col-md-2 col-lg-3 text-right p-0">
+        <a href="{{ doc.get_accept_group_url }}" class="btn btn-primary btn-sm p-0 mx-1">Подтвердить</a>
+        <a href="{{ doc.get_reject_url }}" class="btn btn-danger btn-sm p-0 mx-1">Отклонить</a>
+    </div>
+</div>
+{% endfor %}
+<br>
+{% endif %}

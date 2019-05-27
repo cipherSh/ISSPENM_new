@@ -14,17 +14,46 @@
     <div class="col-lg-12" style="margin-right:100px">
 
         <!-- Мои документы -->
-
-        {% include "reestr/includes/include_my_docs_list.html" %}
+        {% if my_docs %}
+        <div class="row">
+            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
+                {% include "reestr/includes/include_my_docs_list.html" %}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Недавно добавленные -->
-
-        {% include "reestr/includes/include_criminals_list.html" %}
-
+        <div class="row">
+            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
+                {% include "reestr/includes/include_criminals_list.html" %}
+            </div>
+        </div>
         <!-- Не подтвержденные документы-->
+        {% if uncheck_docs %}
+        <div class="row">
+            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
+                {% include "reestr/includes/include_uncheck_docs_list.html" %}
+            </div>
+        </div>
+        {% endif %}
 
-        {% include "reestr/includes/include_uncheck_docs_list.html" %}
+        <!-- Индивидуальные запросы-->
+        {% if docs_requests %}
+        <div class="row">
+            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
+                {% include "reestr/includes/include_requests.html" %}
+            </div>
+        </div>
+        {% endif %}
 
+        <!-- Групповые запросы-->
+        {% if docs_requests_group %}
+        <div class="row">
+            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-4 shadow-sm">
+                {% include "reestr/includes/include_group_requests.html" %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 
 </div>

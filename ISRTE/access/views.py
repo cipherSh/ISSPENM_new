@@ -1,13 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse, reverse
 from django.views.generic import View
 from datetime import datetime
 
 from .forms import GroupAccessForm, PersonalAccessForm, GroupAccessUpdateForm, PersonalAccessUpdateForm, \
-    RequestToOpenAccessForm
+    RequestToOpenAccessForm, RequestToOpenAcceptForm, RequestToOpenRejectForm, RequestToOpenGroupAccessForm, \
+    RequestToOpenGroupAcceptForm
 
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import PersonAccess, GroupAccess
+from .models import PersonAccess, GroupAccess, RequestToOpen
 from reestr.models import Criminals
 
 
@@ -73,9 +74,13 @@ def access_determinate(request, criminal):
 def access_list(request):
     group_access = GroupAccess.objects.all()
     person_access = PersonAccess.objects.all()
+    docs_requests = RequestToOpen.objects.filter(check=False).filter(group=False).order_by('-date_request')
+    docs_requests_group = RequestToOpen.objects.filter(check=False).filter(group_id=not None).order_by('-date_request')
     context = {
         'group_access': group_access,
-        'person_access': person_access
+        'person_access': person_access,
+        'docs_requests': docs_requests,
+        'docs_requests_group': docs_requests_group
     }
     return render(request, 'access/access_list.html', context=context)
 
@@ -158,6 +163,38 @@ class RequestToOpenPersonalAccess(View):
         return render(request, 'reestr/criminals/request_to_open_pa.html', context=context)
 
 
+class RequestToOpenGroupAccess(View):
+    def get(self, request, pk):
+        criminal = Criminals.objects.get(id=pk)
+        form = RequestToOpenGroupAccessForm()
+        context = {
+            'criminal': criminal,
+            'form': form
+        }
+        return render(request, 'reestr/criminals/request_to_open_group.html', context=context)
+
+    def post(self, request, pk):
+        criminal = Criminals.objects.get(id=pk)
+        bound_form = RequestToOpenGroupAccessForm(request.POST)
+
+        if bound_form.is_valid():
+            new_request = bound_form.save(commit=False)
+            new_request.doc = criminal
+            new_request.group = True
+            new_request.user_id = request.user.profile
+            new_request.check = False
+            new_request.accept = False
+            new_request.date_request = datetime.now()
+            new_request.save()
+            return redirect(criminal)
+
+        context = {
+            'criminal': criminal,
+            'form': bound_form
+        }
+        return render(request, 'reestr/criminals/request_to_open_group.html', context=context)
+
+
 class GroupAccessCreate(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -198,3 +235,99 @@ class PersonalAccessCreate(View):
             new_access.save()
             return redirect(criminal)
         return render(request, 'access/personal_access_create.html', context={'form': bound_form, 'criminal': criminal})
+
+
+class RequestToOpenAccept(View):
+    def get(self, request, pk):
+        request_to_open = RequestToOpen.objects.get(id=pk)
+        form = RequestToOpenAcceptForm
+        context = {
+            'request_to_open': request_to_open,
+            'form': form
+        }
+        return render(request, 'access/personal_access_create.html', context=context)
+
+    def post(self, request, pk):
+        bound_form = RequestToOpenAcceptForm(request.POST)
+        request_to_open = RequestToOpen.objects.get(id=pk)
+        context = {
+            'request_to_open': request_to_open,
+            'form': bound_form
+        }
+
+        if bound_form.is_valid():
+            new_access = bound_form.save(commit=False)
+            new_access.doc_id = request_to_open.doc
+            new_access.user_id = request_to_open.user_id
+            old_access = PersonAccess.objects.filter(doc_id=new_access.doc_id).filter(user_id=new_access.user_id)
+            if old_access:
+                old_access.delete()
+            new_access.save()
+            request_to_open.check = True
+            request_to_open.accept = True
+            request_to_open.date_check = datetime.now()
+            request_to_open.save()
+            return redirect('/')
+        return render(request, 'access/personal_access_create.html', context=context)
+
+
+class RequestToOpenGroupAccept(View):
+    def get(self, request, pk):
+        request_to_open = RequestToOpen.objects.get(id=pk)
+        form = RequestToOpenGroupAcceptForm
+        context = {
+            'request_to_open': request_to_open,
+            'form': form
+        }
+        return render(request, 'access/personal_access_create.html', context=context)
+
+    def post(self, request, pk):
+        bound_form = RequestToOpenGroupAcceptForm(request.POST)
+        request_to_open = RequestToOpen.objects.get(id=pk)
+        context = {
+            'request_to_open': request_to_open,
+            'form': bound_form
+        }
+
+        if bound_form.is_valid():
+            new_access = bound_form.save(commit=False)
+            new_access.doc_id = request_to_open.doc
+            new_access.group_id = request_to_open.group_id
+            old_access = GroupAccess.objects.filter(doc_id=new_access.doc_id).filter(group_id=new_access.group_id)
+            if old_access:
+                old_access.delete()
+            new_access.save()
+            request_to_open.check = True
+            request_to_open.accept = True
+            request_to_open.date_check = datetime.now()
+            request_to_open.save()
+            return redirect('/')
+        return render(request, 'access/personal_access_create.html', context=context)
+
+
+class RequestToOpenReject(View):
+    def get(self, request, pk):
+        request_to_open = RequestToOpen.objects.get(id=pk)
+        form = RequestToOpenRejectForm
+        context = {
+            'request_to_open': request_to_open,
+            'form': form
+        }
+        return render(request, 'access/request_reject.html', context=context)
+
+    def post(self, request, pk):
+        request_to_open = RequestToOpen.objects.get(id=pk)
+        bound_form = RequestToOpenRejectForm(request.POST)
+        context = {
+            'request_to_open': request_to_open,
+            'form': bound_form
+        }
+
+        if bound_form.is_valid():
+            temp = bound_form.save(commit=False)
+            request_to_open.reason_reject = temp.reason_reject
+            request_to_open.check = True
+            request_to_open.date_check = datetime.now()
+            request_to_open.save()
+            return redirect('/registry/')
+        return render(request, 'access/request_reject.html', context=context)

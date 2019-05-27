@@ -3,10 +3,22 @@
 {% block content_wrapper %}
 {% if criminal %}
     <form action="{% url 'personal_access_create_url' pk=criminal.id %}" method="post">
+{% elif not request_to_open.group_id %}
+    <form action="{{ request_to_open.get_accept_url }}" method="post">
+{% elif request_to_open.group_id %}
+    <form action="{{ request_to_open.get_accept_group_url }}" method="post">
 {% else %}
     <form action="{% url 'personal_access_update_url' pk=doc.id %}" method="post">
 {% endif %}
+        {% if not request_to_open %}
         <p>Индивидуальный доступ к досье <b>{{ criminal }}</b></p>
+        {% endif %}
+        {% if not request_to_open.group_id %}
+        <p>Предоставление доступа к пользователю <b>{{ request_to_open.user_id }}</b> на досье <b>{{ request_to_open.doc }}</b></p>
+        {% endif %}
+        {% if request_to_open.group_id %}
+        <p>Предоставление группового доступа к группе <b>{{ request_to_open.group_id }}</b> на досье <b>{{ request_to_open.doc }}</b></p>
+        {% endif %}
         {% csrf_token %}
         {% for field in form %}
 
@@ -25,7 +37,7 @@
             <button type="submit" class="btn btn-primary btn-block">Сохранить</button>
         </div>
     </form>
-    {% if not criminal %}
+    {% if not criminal and not request_to_open %}
     <div class="col-md-4 col-lg-2 p-0 mt-2">
         <a href="{% url 'personal_access_delete_url' pk=doc.id %}" class="btn btn-danger btn-block">Удалить</a>
     </div>

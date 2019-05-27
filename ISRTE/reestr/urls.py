@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from access.views import GroupAccessCreate, PersonalAccessCreate, RequestToOpenPersonalAccess
+from access.views import GroupAccessCreate, PersonalAccessCreate, RequestToOpenPersonalAccess, RequestToOpenGroupAccess
 
 urlpatterns = [
     path('', views.homepage, name='homepage_url'),
@@ -19,6 +19,8 @@ urlpatterns = [
          name="personal_access_create_url"),
     path('registry/criminal/<int:pk>/access/personal/request/', RequestToOpenPersonalAccess.as_view(),
          name="request_to_open_pa_url"),
+    path('registry/criminal/<int:pk>/access/group/request/', RequestToOpenGroupAccess.as_view(),
+         name="request_to_open_group_url"),
 
     path('registry/criminal/<int:pk>/add/relative', views.CriminalAddRelativeView.as_view(),
          name="criminal_add_relative_url"),

@@ -82,11 +82,10 @@
             <span class="mx-2">Дата создания:</span>
             <span class="text-primary">{{criminal.created}}</span>
             <span class="mx-2">Уровень секретности:</span>
-            {% if criminal.confident %}
+
             <span class="text-primary">{{criminal.confident}}</span>
-            {% else %}
-            <span class="text-primary">Открытая информация</span>
-            {% endif %}
+
+
             {% if criminal.owner == request.user.profile or request.user.is_superuser %}
             <a href="{{ criminal.get_criminal_confident_change_url }}" class="btn btn-primary btn-sm btn-block">Изменить
                 уровень секретности</a>

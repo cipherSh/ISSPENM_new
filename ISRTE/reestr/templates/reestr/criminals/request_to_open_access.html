@@ -14,9 +14,9 @@
     <div class="col-lg-12 mt-3 pl-5">
         <h5>Извините у вас нету доступа к досье {{ criminal }}</h5>
         <div class="row p-5 ">
-            <a href="{% url 'criminals_list_url' %}" class="col-md-5 col-lg-3 mx-2 btn btn-primary btn-sm">Назад</a>
-            <a href="{% url 'request_to_open_pa_url' pk=criminal.id %}" class="col-md-5 col-lg-3 mx-2 btn btn-primary">Запрос индивидуального доступа</a>
-            <a href="" class="col-md-5 col-lg-3 mx-2 btn btn-primary">Запрос на открытие группового доступа</a>
+            <a href="{% url 'criminals_list_url' %}" class="col-md-5 col-lg-2 mx-2 btn btn-primary btn-sm">Назад</a>
+            <a href="{{ criminal.get_request_to_open_pa_url }}" class="col-md-5 col-lg-3 mx-2 btn btn-primary">Запрос индивидуального доступа</a>
+            <a href="{{ criminal.get_request_to_open_group_url }}" class="col-md-5 col-lg-2 mx-2 btn btn-primary">Запрос группового доступа</a>
         </div>
     </div>
 </div>

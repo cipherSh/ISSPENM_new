@@ -193,6 +193,9 @@ class Criminals(models.Model):
     def get_request_to_open_pa_url(self):
         return reverse('request_to_open_pa_url', kwargs={'pk': self.id})
 
+    def get_request_to_open_group_url(self):
+        return reverse('request_to_open_group_url', kwargs={'pk': self.id})
+
 
 class Persons(models.Model):
     first_name = models.CharField(max_length=200, verbose_name='Имя')

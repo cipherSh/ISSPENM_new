@@ -58,6 +58,7 @@ class RequestToOpen(models.Model):
     check = models.BooleanField(verbose_name='Обработано')
     accept = models.BooleanField(verbose_name='Открыть доступ')
     reason_reject = models.TextField(null=True, blank=True, verbose_name='Причина отклонение')
+    date_check = models.DateTimeField(null=True, blank=True, verbose_name="Дата обработки запроса")
 
     class Meta:
         verbose_name = "Запрос на доступ"
@@ -70,6 +71,9 @@ class RequestToOpen(models.Model):
 
     def get_accept_url(self):
         return reverse('request_accept_url', kwargs={'pk': self.id})
+
+    def get_accept_group_url(self):
+        return reverse('group_request_accept_url', kwargs={'pk': self.id})
 
     def get_reject_url(self):
         return reverse('request_reject_url', kwargs={'pk': self.id})

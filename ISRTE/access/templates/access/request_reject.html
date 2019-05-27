@@ -1,0 +1,25 @@
+{% extends "wrapper.html" %}
+
+{% block content_wrapper %}
+<form action="{{ request_to_open.get_reject_url }}" method="post">
+
+    <p>Отклонение запроса <b>{{ request_to_open.user_id }}</b> на индивидуальный доступ к досье <b>{{ request_to_open.doc }}</b></p>
+        {% csrf_token %}
+        {% for field in form %}
+
+            {% if field.error %}
+                {{ field.error }}
+            {% endif %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-3">{{field.label}}</div>
+                    <div class="col-lg-6">{{field}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        <br>
+        <div class="col-md-4 col-lg-2 p-0">
+            <button type="submit" class="btn btn-primary btn-block">Сохранить</button>
+        </div>
+    </form>
+{% endblock %}

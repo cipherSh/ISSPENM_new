@@ -47,3 +47,34 @@ class RequestToOpenAccessForm(forms.ModelForm):
         widgets = {
             'reason_open': forms.Textarea(attrs={'class': 'form-control'})
         }
+
+
+class RequestToOpenGroupAccessForm(forms.ModelForm):
+    class Meta:
+        model = RequestToOpen
+        fields = ['group_id', 'reason_open']
+        widgets = {
+            'reason_open': forms.Textarea(attrs={'class': 'form-control'}),
+            'group_id': forms.Select(attrs={'class': 'form-control'})
+        }
+
+
+class RequestToOpenRejectForm(forms.ModelForm):
+    class Meta:
+        model = RequestToOpen
+        fields = ['reason_reject']
+        widgets = {
+            'reason_reject': forms.Textarea(attrs={'class': 'form-control'})
+        }
+
+
+class RequestToOpenAcceptForm(forms.ModelForm):
+    class Meta:
+        model = PersonAccess
+        fields = ['add_access', 'update', 'execute_access', 'special']
+
+
+class RequestToOpenGroupAcceptForm(forms.ModelForm):
+    class Meta:
+        model = GroupAccess
+        fields = ['add', 'update', 'execute']
