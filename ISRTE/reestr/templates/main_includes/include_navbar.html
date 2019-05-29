@@ -1,38 +1,43 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="col-10 p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">ОПКК МВД КР</a>
+        <div class="">
 
-    <a class="navbar-brand" href="#">ОПКК МВД КР</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'homepage_url' %}">Главная<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'registry_url' %}">Реестр</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'cc_list_url' %}">Уголовные дела</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
-            </li>
-            {% if perms.auth.add_user %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'users_list_url' %}">Пользователи</a>
-            </li>
-            {% endif %}
-            {% if perms.auth.view_group %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'group_list_url' %}">Группы</a>
-            </li>
-            {% endif %}
-            {% if perms.access %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'control_access_url' %}">Управление доступом</a>
-            </li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
-<div class="col-4 d-flex justify-content-end align-items-center">
-    <a class="btn bt-sm btn-outline-secondary" href="{% url 'logout_url' %}">{{ user.get_username }}</a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'homepage_url' %}">Главная<span
+                            class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'registry_url' %}">Реестр</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cc_list_url' %}">Уголовные дела</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
+                </li>
+                {% if perms.auth.add_user %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users_list_url' %}">Пользователи</a>
+                </li>
+                {% endif %}
+                {% if perms.auth.view_group %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'group_list_url' %}">Группы</a>
+                </li>
+                {% endif %}
+                {% if perms.access %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'control_access_url' %}">Управление доступом</a>
+                </li>
+                {% endif %}
+            </ul>
+
+        </div>
+
+    </nav>
+</div>
+<div class="col-2 d-flex justify-content-end align-items-center">
+    <a class="btn bt-sm btn-outline-light" href="{% url 'logout_url' %}">Выйти ({{ user.get_username }})</a>
 </div>

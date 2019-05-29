@@ -55,3 +55,23 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
+class Audit(models.Model):
+    user = models.ForeignKey(Profile, verbose_name='Пользователь', null=True, on_delete=models.PROTECT)
+    act = models.CharField(max_length=200, verbose_name='Действие')
+    data = models.DateTimeField(verbose_name='Дата')
+
+    class Meta:
+        verbose_name = "Аудит входа и выхода"
+        verbose_name_plural = "Аудит входа и выхода"
+        ordering = ['-data']
+
+    def __str__(self):
+        return str(self.data) + ' --- ' + str(self.user) + ' --- ' + self.act
+
+
+
+
+
+
+
+

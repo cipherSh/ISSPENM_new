@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
+from datetime import datetime
+from django.utils.timezone import get_current_timezone
+import pytz
 
 #models
-from .models import Profile
+from .models import Profile, Audit
 from reestr.models import Criminals
 
 # Create your views here.
@@ -18,6 +21,8 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
+                Audit.objects.create(user=request.user.profile, act='Вход в систему', data=datetime.now(
+                    tz=get_current_timezone()))
                 return redirect("/")
             else:
                 login_error = "Вам закрыто вход в систему"
@@ -30,6 +35,8 @@ def login_view(request):
 
 
 def logout_view(request):
+    Audit.objects.create(user=request.user.profile, act='Выход из системы', data=datetime.now(
+                    tz=get_current_timezone()))
     logout(request)
     return redirect('/users/login/')
 

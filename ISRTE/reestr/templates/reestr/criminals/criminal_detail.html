@@ -107,11 +107,12 @@
                 <img src="{% static 'access/icon_close_32.png'%}" alt="Закрыть доступ">
             </a>
             {% else %}
-            <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-warning btn-sm btn-block">Открыть
-                доступ</a>
+            <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-outline-success btn-sm btn-block">
+                <img src="{% static 'access/icon_open_32.png'%}" alt="Закрыть доступ">
+            </a>
             {% endif %}
             <a href="{{ criminal.get_group_access_create_url }}" class="btn btn-outline-primary btn-sm btn-block">
-                <img src="{% static 'access/icon_add_group.png'%}" alt="Открыть групповой доступ">
+                <img src="{% static 'access/icons_add_group.png'%}" alt="Открыть групповой доступ">
             </a>
             <a href="{{ criminal.get_personal_access_create_url }}" class="btn btn-outline-info btn-sm btn-block">
                 <img src="{% static 'access/icon_add_user.png'%}" alt="Открыть персональный доступ">

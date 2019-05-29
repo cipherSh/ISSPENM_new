@@ -1,0 +1,36 @@
+
+
+<nav class="navbar bg-dark navbar-expand-lg navbar-dark justify-content-between">
+    <a href="#" class="navbar-brand">ОПКК МВД КР</a>
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'homepage_url' %}">Главная<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'registry_url' %}">Реестр</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cc_list_url' %}">Уголовные дела</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
+            </li>
+            {% if perms.auth.add_user %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users_list_url' %}">Пользователи</a>
+            </li>
+            {% endif %}
+            {% if perms.auth.view_group %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'group_list_url' %}">Группы</a>
+            </li>
+            {% endif %}
+            {% if perms.access %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'control_access_url' %}">Управление доступом</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

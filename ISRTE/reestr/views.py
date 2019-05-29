@@ -310,6 +310,8 @@ class AddNewCriminalToCCView(View):
 
         if bound_form_criminal.is_valid() and bound_form_add.is_valid():
             new_criminal = bound_form_criminal.save()
+            new_criminal.owner = request.user.profile
+            new_criminal.user = request.user.profile
             new_case_member = bound_form_add.save(commit=False)
             new_case_member.criminal_case = case
             new_case_member.criminal_id = new_criminal
@@ -616,7 +618,7 @@ class CriminalCaseUpdateView(View):
 
     def post(self, request, pk):
         cc = CriminalCase.objects.get(id=pk)
-        bound_form = CriminalCaseUpdateForm(request.POST)
+        bound_form = CriminalCaseUpdateForm(request.POST, instance=cc)
         context = {
             'cc': cc,
             'form': bound_form
@@ -625,11 +627,6 @@ class CriminalCaseUpdateView(View):
         if bound_form.is_valid():
             new_case = bound_form.save(commit=False)
             new_case.save()
-            mcc = CriminalCaseCriminals.objects.filter(criminal_case=cc)
-            for item in mcc:
-                item.criminal_case = new_case
-                item.save()
-            cc.delete()
             return redirect(new_case)
         return render(request, 'reestr/ccase/cc_update.html', context=context)
 
@@ -686,14 +683,13 @@ class ManhuntUpdateView(View):
 
     def post(self, request, pk):
         manhunt = Manhunt.objects.get(id=pk)
-        bound_form = CriminalManhuntUpdateForm(request.POST)
+        bound_form = CriminalManhuntUpdateForm(request.POST, instance=manhunt)
         context = {
             'manhunt': manhunt,
             'form': bound_form,
         }
         if bound_form.is_valid():
             new_manhunt = bound_form.save()
-            manhunt.delete()
             return redirect(new_manhunt)
         return render(request, 'reestr/ccase/manhunt_update.html', context=context)
 

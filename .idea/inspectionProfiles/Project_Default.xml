@@ -9,6 +9,7 @@
           <option value="reestr.models.Criminals.id" />
           <option value="reestr.models.Criminals.objects" />
           <option value="reestr.models.Conviction.objects" />
+          <option value="django.db.models.fields.DateTimeField.__add__" />
         </list>
       </option>
     </inspection_tool>
