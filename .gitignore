@@ -3,4 +3,5 @@ venv
 .idea
 .env
 .idea/inspectionProfiles/Project_Default.xml.
+
 _variable.scss

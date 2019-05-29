@@ -1,87 +1,162 @@
 {% extends "wrapper.html" %}
+{% load static %}
 {% block page%}
 <div class="col-lg-5"></div>
 <div class="col-lg-3"><h4>Розыскное дело</h4></div>
 <div class="col-lg-4 p-1"></div>
 {% endblock %}
 {% block content_wrapper %}
-<div class="shadow border mx-n3" style="min-height: 570px">
-    <div class="row rounded">
-        <div class="col-lg-5"></div>
-        <div class="col-lg-4"><h3>{{manhunt}}</h3></div>
-        <div class="col-lg-3"></div>
-    </div>
-    <div class="row my-2 mx-3">
-        <div class="col-lg-2"></div>
-        <div class="col-lg-8">
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">ФИО:</div>
-                <div class="col-lg-8">
-                    <a href="{{ manhunt.criminal_id.get_absolute_url }}" class="text-muted">
-                        {{ manhunt.criminal_id }}
-                    </a>
+
+<div class="row border shadow pb-3 mb-5">
+    <div class="col m-3">
+        <div class="row border-bottom border-top py-2">
+            <div class="col-lg-4">
+                <div class="row h4 p-0 m-0">Дело №: {{ manhunt }}</div>
+                <div class="row p-0 m-0">
+                    {% if manhunt.invest_stopped %}
+                    <span class="text-success h6">Розыск прекращен</span>
+                    {% else %}
+                    <span class="text-danger h6">В розыске</span>
+                    {% endif %}
                 </div>
             </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">№ УД:</div>
-                <div class="col-lg-8">
-                    <a href="{{ manhunt.criminalCase_id.get_absolute_url }}" class="text-muted">
-                        {{manhunt.criminalCase_id}}
-                    </a>
+            <div class="col-lg-6"></div>
+            <div class="col-lg-2 text-right">
+                <a href="{{ manhunt.get_update_url }}" class="btn btn-outline-primary">
+                    <img src="{% static 'access/icon_redacting.png' %}" alt="Исключить">
+                </a>
+                <a href="{{ manhunt.get_delete_url }}" class="btn btn-outline-danger">
+                    <img src="{% static 'access/icon_delete_32.png' %}" alt="Исключить">
+                </a>
+            </div>
+        </div>
+
+        <div class="row border-bottom pb-2">
+            <div class="col-lg-2">
+                <div class="row mb-2 mt-2 justify-content-center bg-dark pt-2 pb-2 rounded">
+                    <div>
+                        <img src="{% static 'homepage/images/no_photo.jpg' %}" class="rounded " width="190"
+                             height="200">
+                    </div>
                 </div>
             </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Инициатор заведения РД</div>
-                <div class="col-lg-8">{{ manhunt.invest_initiator}}</div>
+            <div class="col-lg-6 pt-2">
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">ФИО</div>
+                    <div class="col-lg-8">{{ manhunt.criminal_id }}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">Дата рождения:</div>
+                    <div class="col-lg-8">{{ manhunt.criminal_id.birthday }}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">Место рождения:</div>
+                    <div class="col-lg-8">
+                        {{ manhunt.criminal_id.birth_country }} {{ manhunt.criminal_id.birth_region }}
+                        {{ manhunt.criminal_id.birth_District }} {{ manhunt.criminal_id.birth_City }}
+                        {{ manhunt.criminal_id.birth_Village }}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">Пол:</div>
+                    <div class="col-lg-8">{{ manhunt.criminal_id.gender }}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">Тип деятельности:</div>
+                    <div class="col-lg-8 font-weight-bold text-info">{{ manhunt.criminal_id.occupation }}</div>
+                </div>
             </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Дата заведения:</div>
-                <div class="col-lg-8">{{ manhunt.date_arousal}}</div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Категория учета розыска</div>
-                <div class="col-lg-8">{{ manhunt.invest_category}}</div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Номер циркуляра</div>
-                <div class="col-lg-8">{{ manhunt.circular_number}}</div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Мера пресечения</div>
-                <div class="col-lg-8">{{ manhunt.preventive}}</div>
-            </div>
-            {% if manhunt.date_inter_invest %}
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Дата поступления в международный розыск</div>
-                <div class="col-lg-8">{{ manhunt.date_inter_invest}}</div>
-            </div>
-            {% endif %}
-            {% if manhunt.invest_stopped %}
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Розыск прекращен</div>
-                <div class="col-lg-8">{{ manhunt.invest_stopped}}</div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Место задержания</div>
-                <div class="col-lg-8">{{ manhunt.place_detention}}</div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Дата задержания</div>
-                <div class="col-lg-8">{{ manhunt.date_detention}}</div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-4 font-weight-bold">Номер циркуляра о прекращение розыска</div>
-                <div class="col-lg-8">{{ manhunt.invest_stopped_circular}}</div>
-            </div>
-            {% endif %}
-        </div>
-        <div class="col-lg-2 my-3">
-            <div class="col-lg-12">
-                <a href="{{ manhunt.get_update_url }}" class="btn btn-success btn-sm btn-block">Редактировать</a>
-                <a href="{{ manhunt.get_delete_url }}" class="btn btn-danger btn-sm btn-block">Удалить РД</a>
+            <div class="col-lg-4 pt-2">
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">ИНН:</div>
+                    <div class="col-lg-8">{{ manhunt.criminal_id.INN }}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">№ документа</div>
+                    <div class="col-lg-8">
+                        {{ manhunt.criminal_id.passport_serial }}{{manhunt.criminal_id.passport_number }}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-4 font-weight-bold">Орган выдачи</div>
+                    <div class="col-lg-8">{{ manhunt.criminal_id.issue_organ }}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-lg-4 font-weight-bold">Дата выдачи</div>
+                    <div class="col-lg-8">{{ manhunt.criminal_id.issue_data }}</div>
+                </div>
             </div>
         </div>
+        <div class="row pt-2 pb-3 border-bottom">
+            <div class="col-lg-4">
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Инициатор заведения РД</div>
+                    <div class="col-lg-6">{{ manhunt.invest_initiator}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Категория учета розыска</div>
+                    <div class="col-lg-6">{{ manhunt.invest_category}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">№ циркуляра</div>
+                    <div class="col-lg-6">{{ manhunt.circular_number}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Дата заведения:</div>
+                    <div class="col-lg-6">{{ manhunt.date_arousal}}</div>
+                </div>
+                {% if manhunt.date_inter_invest %}
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Дата поступления в межд.розыск</div>
+                    <div class="col-lg-6">{{ manhunt.date_inter_invest}}</div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">№ УД:</div>
+                    <div class="col-lg-6">
+                        <a href="{{ manhunt.criminalCase_id.get_absolute_url }}" class="text-muted">
+                            {{manhunt.criminalCase_id}}
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Инициатор заведения УД</div>
+                    <div class="col-lg-6">{{manhunt.criminalCase_id.organ}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Статья</div>
+                    <div class="col-lg-6">{{manhunt.criminalCase_id.article}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Дата заведения УД</div>
+                    <div class="col-lg-6">{{ manhunt.criminalCase_id.date_arousal}}</div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Мера пресечения</div>
+                    <div class="col-lg-6">{{ manhunt.preventive}}</div>
+                </div>
+                {% if manhunt.invest_stopped %}
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Место задержания</div>
+                    <div class="col-lg-6">{{ manhunt.place_detention}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">Дата задержания</div>
+                    <div class="col-lg-6">{{ manhunt.date_detention}}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6 font-weight-bold">№ циркуляра о прекращение розыска</div>
+                    <div class="col-lg-6">{{ manhunt.invest_stopped_circular}}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+
     </div>
 </div>
-
 {% endblock content_wrapper %}

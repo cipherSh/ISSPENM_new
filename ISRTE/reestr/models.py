@@ -396,6 +396,18 @@ class CriminalCase(models.Model):
     def get_absolute_url(self):
         return reverse('cc_detail_url', kwargs={'pk': self.id})
 
+    def get_update_url(self):
+        return reverse('cc_update_url', kwargs={'pk': self.id})
+
+    def get_delete_url(self):
+        return reverse('cc_delete_url', kwargs={'pk': self.id})
+
+    def get_add_existing_criminal_add_url(self):
+        return reverse('cc_add_existing_criminal_url', kwargs={'pk': self.id})
+
+    def get_add_new_criminal_url(self):
+        return reverse('cc_add_new_criminal_url', kwargs={'pk': self.id})
+
 
 class CriminalCaseCriminals(models.Model):
     criminal_case = models.ForeignKey(CriminalCase, verbose_name='Уголовное дело', on_delete=models.CASCADE)
@@ -406,7 +418,10 @@ class CriminalCaseCriminals(models.Model):
         verbose_name_plural = 'Уголовное дело -- ответчики'
 
     def __str__(self):
-        return CriminalCase.__str__() + ' -- ' + Criminals.__str__()
+        return str(self.criminal_case) + ' - ' + str(self.criminal_id)
+
+    def get_delete_url(self):
+        return reverse('cc_criminal_delete_url', kwargs={'pk': self.id})
 
 
 class Manhunt(models.Model):

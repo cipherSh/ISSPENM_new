@@ -15,22 +15,29 @@
     <!-- ФИО -->
     <div class="col-lg-12">
         <div class="row">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-8 text-center"><h3>{{ criminal }}</h3></div>
             <div class="col-lg-2">
-                <div class="row p-1">
-                    <div class="col-lg-7 p-0"></div>
+                <div class="row p-0">
+
                     {% if criminal.check %}
-                    <div class="col-lg-5 bg-success rounded text-light p-0"><h6>Подтвержден</h6></div>
+                    <div class="col-lg-6 text-success m-0 p-0"><h6>Подтвержден</h6></div>
                     {% else %}
-                    <div class="col-lg-5 btn btn-sm p-0 btn-warning rounded text-light"><h6>1</h6></div>
+                    <div class="col-lg-8 text-warning m-0 p-0"><h6>Не подтвержден</h6></div>
                     {% endif %}
                 </div>
+            </div>
+            <div class="col-lg-8 text-center"><h3>{{ criminal }}</h3></div>
+            <div class="col-lg-2 p-0">
+                {% if not criminal.check %}
+                {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head' %}
+                <a href="{{ criminal.get_criminal_check_url }}" class="btn btn-success btn-block">Подтвердить</a>
+                {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
     <!-- навбар -->
     <div class="col-lg-3">
+
         <div class="row mb-2 mt-2 justify-content-center bg-dark pt-2 pb-2 rounded">
             <div>
                 <img src="{% static 'homepage/images/no_photo.jpg' %}" class="rounded " width="290"
@@ -52,12 +59,8 @@
     <!-- досье -->
     {% include "reestr/criminals/includes/include_criminal_dosye.html"%}
     <!-- информация -->
-    <div class="col-lg-2 pt-2">
-        {% if not criminal.check %}
-        {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head' %}
-        <a href="{{ criminal.get_criminal_check_url }}" class="btn btn-success btn-block ">Подтвердить</a>
-        {% endif %}
-        {% endif %}
+    <div class="col-lg-2 pt-2 border-left">
+
         {% if perms.reestr.change_criminals %}
         <a href="{{ criminal.get_update_url }}" class="btn btn-outline-primary btn-sm">
             <img src="{% static 'access/icon_redacting.png' %}" alt="Редактировать">
@@ -65,15 +68,15 @@
         {% endif %}
         {% if request.user.is_superuser %}
         <a href="{{ criminal.get_delete_url}}" class="btn btn-outline-danger btn-sm ">
-            <img src="{% static 'access/icon_delete.png'%}" alt="Удалить">
+            <img src="{% static 'access/icon_delete_32.png'%}" alt="Удалить">
         </a>
         {% endif %}
         {% if perms.reestr %}
-        <a href="#" class="btn btn-success btn-sm">
-            <img src="{% static 'access/icon_delete2.png'%}" alt="Печать">
+        <a href="#" class="btn btn-outline-secondary btn-sm">
+            <img src="{% static 'access/icon_print_32.png'%}" alt="Печать">
         </a>
         {% endif %}
-        <br>
+        <hr>
         <div class="row m-0 p-0">
             <span class="mx-2">Владелец:</span>
             <a href="#" class="text-muted">{{criminal.owner}}</a>
@@ -81,11 +84,12 @@
             <a href="">{{criminal.user}}</a>
             <span class="mx-2">Дата создания:</span>
             <span class="text-primary">{{criminal.created}}</span>
+
             <span class="mx-2">Уровень секретности:</span>
 
             <span class="text-primary">{{criminal.confident}}</span>
 
-
+            <br>
             {% if criminal.owner == request.user.profile or request.user.is_superuser %}
             <a href="{{ criminal.get_criminal_confident_change_url }}" class="btn btn-primary btn-sm btn-block">Изменить
                 уровень секретности</a>
@@ -99,16 +103,19 @@
         <div class="row m-0 p-0">
             {% if criminal.owner == request.user.profile or request.user.is_superuser %}
             {% if criminal.close == False%}
-            <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-danger btn-sm btn-block">Закрыть
-                доступ</a>
+            <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-outline-danger btn-sm btn-block">
+                <img src="{% static 'access/icon_close_32.png'%}" alt="Закрыть доступ">
+            </a>
             {% else %}
             <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-warning btn-sm btn-block">Открыть
                 доступ</a>
             {% endif %}
-            <a href="{{ criminal.get_group_access_create_url }}" class="btn btn-success btn-sm btn-block">Открыть
-                групповой доступ</a>
-            <a href="{{ criminal.get_personal_access_create_url }}" class="btn btn-success btn-sm btn-block">Открыть
-                индивидуальный доступ</a>
+            <a href="{{ criminal.get_group_access_create_url }}" class="btn btn-outline-primary btn-sm btn-block">
+                <img src="{% static 'access/icon_add_group.png'%}" alt="Открыть групповой доступ">
+            </a>
+            <a href="{{ criminal.get_personal_access_create_url }}" class="btn btn-outline-info btn-sm btn-block">
+                <img src="{% static 'access/icon_add_user.png'%}" alt="Открыть персональный доступ">
+            </a>
             {% endif %}
         </div>
     </div>

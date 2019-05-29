@@ -46,7 +46,7 @@
     {% endif %}
 </main>
 
-
+{% if not search_text %}
 {% if my_requests %}
 <main role="main" class="container border shadow mt-5 bg-light">
     <div class="row">
@@ -57,7 +57,7 @@
     <div class="row mb-4">
         <br>
         {% for req in my_requests %}
-        <div class="col-lg-5 rounded border m-0 shadow my-2 mx-4 ml-5 bg-white">
+        <div class="col-lg-5 rounded border m-0 shadow my-2 mx-4 ml-5 bg-white" style="min-height:200px">
             <h6 class="pb-2 mb-0">{{req.doc}}</h6>
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                 <strong class="d-block text-gray-dark">{% if req.group_id %}Групповой доступ{% else %}Индивидуальный доступ{% endif %}</strong>
@@ -78,7 +78,7 @@
             {% endif %}
             {% if req.reason_reject %}
             <p class="pb-3 mb-0 small">
-                <small class="d-block text-gray-dark">{{ req.reason_reject }}</small>
+                 {{ req.reason_reject }}
             </p>
             {% endif %}
         </div>
@@ -86,7 +86,7 @@
     </div>
 </main>
 {% endif %}
-
+{% endif %}
 
 {% if criminals %}
 <main role="main" class="container rounded shadow py-1 mt-5 mb-5 border">
@@ -165,13 +165,19 @@
     <div class="my-2 p-2 bg-white rounded box-shadow">
         <h6 class="pb-2 mb-0">Пользователи</h6>
         <div class="text-muted pt-3">
+            <div class="row font-weight-bold mx-2 mb-2">
+                <div class="col-lg-4">ФИО</div>
+                <div class="col-lg-2 text-right">Логин</div>
+                <div class="col-lg-2 text-right">Роль</div>
+                <div class="col-lg-2 text-right">Статус</div>
+            </div>
             {% for profile in profiles %}
             <div class="row border-bottom mx-2 mb-2">
                 <div class="col-lg-4">{{ profile }}</div>
                 <div class="col-lg-2 text-right">{{ profile.user }}</div>
                 <div class="col-lg-2 text-right">{{ profile.role_id}}</div>
-                <div class="col-lg-2 text-right">{{ profile.user.is_active }}</div>
-                <div class="col-lg-2 text-right"><a href="{{ profile.get_absolute_url }}">Посмотреть</a></div>
+                <div class="col-lg-2 text-right">{% if profile.user.is_active %}Активный{% else %}Не активный{% endif %}</div>
+                <div class="col-lg-2 text-right"><a href="{{ profile.get_absolute_url }}">Профиль</a></div>
             </div>
 
             {% endfor %}
@@ -181,7 +187,7 @@
                 <div class="col-lg-2 text-right">{{ user}}</div>
                 <div class="col-lg-2 text-right">{{ user.profile.role_id }}</div>
                 <div class="col-lg-2 text-right">{% if user.is_active %}Активный{% else %}Не активный{% endif %}</div>
-                <div class="col-lg-2 text-right"><a href="{{ user.profile.get_absolute_url }}">Посмотреть</a></div>
+                <div class="col-lg-2 text-right"><a href="{{ user.profile.get_absolute_url }}">Профиль</a></div>
             </div>
 
             {% endfor %}

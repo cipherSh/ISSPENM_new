@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Criminals, Persons, CriminalAddresses, ContactRelation, ContactType, Contacts, \
-    PersonAddresses, Occupation, RelativeRelation, Organizations, CriminalsRelatives, CriminalsContactPersons
+    PersonAddresses, Occupation, RelativeRelation, Organizations, CriminalsRelatives, CriminalsContactPersons, \
+    CriminalCaseCriminals
 
 # Register your models here.
 
@@ -16,3 +17,4 @@ admin.site.register(RelativeRelation)
 admin.site.register(PersonAddresses)
 admin.site.register(CriminalsRelatives)
 admin.site.register(CriminalsContactPersons)
+admin.site.register(CriminalCaseCriminals)

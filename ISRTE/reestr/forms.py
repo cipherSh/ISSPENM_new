@@ -75,6 +75,20 @@ class CriminalsCriminalCaseAddForm(forms.ModelForm):
         fields = []
 
 
+class AddExistingCriminalForm(forms.ModelForm):
+    class Meta:
+        model = CriminalCaseCriminals
+        fields = ['criminal_id']
+        widgets = {
+            'criminal_id': forms.Select(attrs={'class': 'form-control'})
+        }
+
+class CriminalCaseUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CriminalCase
+        fields = ['number', 'year', 'article', 'organ', 'date_arousal', 'date_suspension', 'remarks']
+
+
 class CriminalManhuntAddForm(forms.ModelForm):
     class Meta:
         model = Manhunt

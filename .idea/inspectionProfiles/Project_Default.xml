@@ -7,6 +7,8 @@
           <option value="django.db.models.fields.CharField.__add__" />
           <option value="django.db.models.fields.related.ForeignKey.__add__" />
           <option value="reestr.models.Criminals.id" />
+          <option value="reestr.models.Criminals.objects" />
+          <option value="reestr.models.Conviction.objects" />
         </list>
       </option>
     </inspection_tool>

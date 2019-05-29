@@ -8,7 +8,7 @@ from django.db.models import Q
 from .forms import CriminalCreateForm, CriminalContactDetailAddForm, CriminalAddContactPersonForm, \
     CriminalAddAddressForm, PersonsCreateForm, CriminalOwnerChangeForm, CriminalAddRelativeForm, \
     CriminalConfidentChangeForm, CriminalManhuntAddForm, CriminalsCriminalCaseAddForm, CriminalCaseCreateForm, \
-    CriminalConvictionAddForm, CriminalManhuntUpdateForm
+    CriminalConvictionAddForm, CriminalManhuntUpdateForm, CriminalCaseUpdateForm,AddExistingCriminalForm
 
 # models
 from .models import Criminals, Persons, CriminalAddresses, Conviction, Confluence, Contacts, Manhunt, CriminalCase, \
@@ -96,8 +96,10 @@ def registry_page(request):
     docs_requests = []
     docs_requests_group = []
     for my_doc in my_docs:
-        docs_requests = RequestToOpen.objects.filter(doc=my_doc).filter(group_id=None).filter(check=False).order_by('-date_request')
-        docs_requests_group = RequestToOpen.objects.filter(doc=my_doc).filter(group_id=not None).filter(check=False).order_by('-date_request')
+        docs_requests = RequestToOpen.objects.filter(doc=my_doc).filter(group_id=None).filter(check=False).order_by(
+            '-date_request')[:10]
+        docs_requests_group = RequestToOpen.objects.filter(doc=my_doc).filter(group_id=not None).filter(
+            check=False).order_by('-date_request')[:10]
     if not request.user.is_superuser:
         uncheck_docs = Criminals.objects.filter(owner=request.user.profile).filter(check=False).order_by(
             '-created')[:10]
@@ -251,14 +253,75 @@ def cc_list(request):
 def cc_detail(request, pk):
     cc = CriminalCase.objects.get(id=pk)
     ccm = CriminalCaseCriminals.objects.filter(criminal_case=cc)
+    form = AddExistingCriminalForm()
+    delete = None
     context = {
         'nav_btn_add': 'criminal_create_url',
         'wrapper_title': "Уголовные дела",
         'search_url': 'cc_list_url',
+        'form': form,
+        'delete': delete,
         'case': cc,
         'ccm': ccm
     }
     return render(request, 'reestr/ccase/cc-detail.html', context=context)
+
+
+def cc_criminal_delete(request, pk):
+    member = CriminalCaseCriminals.objects.get(id=pk)
+    cc = member.criminal_case
+    member.delete()
+    return redirect(cc)
+
+
+def add_existing_criminal_to_cc(request, pk):
+    cc = CriminalCase.objects.get(id=pk)
+    if request.POST:
+        bound_form = AddExistingCriminalForm(request.POST)
+        if bound_form.is_valid():
+            new_case = bound_form.save(commit=False)
+            new_case.criminal_case = cc
+            if CriminalCaseCriminals.objects.filter(criminal_case=new_case.criminal_case).filter(
+                    criminal_id=new_case.criminal_id):
+                return redirect(cc)
+            else:
+                new_case.save()
+            return redirect(cc)
+        return redirect(cc)
+    return redirect(cc)
+
+
+class AddNewCriminalToCCView(View):
+    def get(self, request, pk):
+        case = CriminalCase.objects.get(id=pk)
+        form_criminal = CriminalCreateForm()
+        form_add = CriminalsCriminalCaseAddForm()
+        context = {
+            'case': case,
+            'form_criminal': form_criminal,
+            'form_add': form_add
+        }
+        return render(request, 'reestr/ccase/cc_add_criminal.html', context=context)
+
+    def post(self, request, pk):
+        case = CriminalCase.objects.get(id=pk)
+        bound_form_criminal = CriminalCreateForm(request.POST)
+        bound_form_add = CriminalsCriminalCaseAddForm(request.POST)
+
+        if bound_form_criminal.is_valid() and bound_form_add.is_valid():
+            new_criminal = bound_form_criminal.save()
+            new_case_member = bound_form_add.save(commit=False)
+            new_case_member.criminal_case = case
+            new_case_member.criminal_id = new_criminal
+            new_case_member.save()
+            return redirect(case)
+
+        context = {
+            'case': case,
+            'form_criminal': bound_form_criminal,
+            'form_add': bound_form_add
+        }
+        return render(request, 'reestr/ccase/cc_add_criminal.html', context=context)
 
 
 # Manhunt
@@ -541,6 +604,48 @@ class CriminalCriminalCaseAddView(View):
         return render(request, 'reestr/criminals/add/criminal_case_add.html', context=context)
 
 
+class CriminalCaseUpdateView(View):
+    def get(self, request, pk):
+        cc = CriminalCase.objects.get(id=pk)
+        form = CriminalCaseUpdateForm(instance=cc)
+        context = {
+            'cc': cc,
+            'form': form
+        }
+        return render(request, 'reestr/ccase/cc_update.html', context=context)
+
+    def post(self, request, pk):
+        cc = CriminalCase.objects.get(id=pk)
+        bound_form = CriminalCaseUpdateForm(request.POST)
+        context = {
+            'cc': cc,
+            'form': bound_form
+        }
+
+        if bound_form.is_valid():
+            new_case = bound_form.save(commit=False)
+            new_case.save()
+            mcc = CriminalCaseCriminals.objects.filter(criminal_case=cc)
+            for item in mcc:
+                item.criminal_case = new_case
+                item.save()
+            cc.delete()
+            return redirect(new_case)
+        return render(request, 'reestr/ccase/cc_update.html', context=context)
+
+
+class AddCriminalToCriminalCaseView(View):
+    def get(self, request, pk):
+        cc = CriminalCase.objects.get(id=pk)
+        form = CriminalCaseUpdateForm(instance=cc)
+
+
+def criminal_case_delete(request, pk):
+    cc = CriminalCase.objects.get(id=pk)
+    cc.delete()
+    return redirect(reverse('cc_list_url'))
+
+
 class CriminalManhuntAddView(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -563,6 +668,7 @@ class CriminalManhuntAddView(View):
             new_manhunt = bound_form.save(commit=False)
             new_manhunt.criminal_id = criminal
             new_manhunt.save()
+
             return redirect(criminal)
         return render(request, 'reestr/criminals/add/manhunt_add.html', context=context)
 
@@ -587,6 +693,7 @@ class ManhuntUpdateView(View):
         }
         if bound_form.is_valid():
             new_manhunt = bound_form.save()
+            manhunt.delete()
             return redirect(new_manhunt)
         return render(request, 'reestr/ccase/manhunt_update.html', context=context)
 
