@@ -1,28 +1,85 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row rounded text-light mb-3 mt-1 bg-dark border border">
-    <div class="col-lg-6"><h4>{{ wrapper_title }}</h4></div>
-    <div class="col-lg-3"></div>
-    <div class="col p-1">
-        {% if nav_btn_add and perms.reestr.add_criminals %}
-        <a href="{% url nav_btn_add %}" class="btn btn-outline-light btn-sm btn-block">Добавить</a>
-        {% endif %}
+
+<div class="row mt-1 mb-3 rounded shadow-sm border" style="background-color: SteelBlue">
+    <div class="col-12">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand border-right pr-3" href="{% url 'registry_url' %}">{{wrapper_title}}</a>
+            {% if wrapper_title == 'Реестр' %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'criminals_list_url' %}">Список досье</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'my_docs_url' %}">Мои документы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'qq_list_url' %}">Запросы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light border-bottom" href="{% url 'uncheck_docs_url' %}">Подтверждение</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light border-bottom" href="#">Отчет</a>
+                </li>
+                <li class="nav-item">
+                    {% if perms.reestr.add_criminals %}
+                    <a href="{% url 'criminal_create_url' %}" class="nav-link text-light">Добавить досье</a>
+                    {% endif %}
+                </li>
+            </ul>
+            {% endif %}
+            {% if wrapper_title == 'Уголовные дела' %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'cc_create_url' %}">Добавить дело</a>
+                </li>
+            </ul>
+            {% endif %}
+            {% if wrapper_title == 'Розыскные дела' %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#">Отчет</a>
+                </li>
+            </ul>
+            {% endif %}
+            {% if wrapper_title == 'Пользователи' %}
+            {% if request.user.is_superuser %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'user_create_url' %}">Добавить</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'users_logs_url' %}">Журнал действий</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'users_audit_url' %}">Аудит входа и выхода</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#">Отчет</a>
+                </li>
+            </ul>
+            {% endif %}
+            {% endif %}
+            {% if search_url %}
+            <form action="{% url search_url %}" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search"
+                       name="search_query_text">
+                <button class="btn btn-primary my-2 my-sm-0" type="submit">Поиск</button>
+            </form>
+            {% endif %}
+        </nav>
     </div>
 </div>
 
-{% if search_url %}
-
-    {% include "main_includes/include_wrapper_search.html" %}
-
-{% endif %}
 
 {% block show_list %}
 
 {% endblock %}
 
 <div class="row" style="min-height:600px">
-    <div class="col-md-9 col-lg-12 content-container pl-4 pt-2 pr-4">
+    <div class="col-12 col-md-12 col-lg-12 content-container pl-4 pt-2 pr-4">
         {% block content_wrapper %}
 
         {% endblock content_wrapper %}

@@ -1,0 +1,30 @@
+{% extends "wrapper.html" %}
+
+{% block content_wrapper %}
+<div class="row"><h3>Добавить уголовное дело <b>{{cc}}</b></h3></div>
+<br>
+<div class="col">
+    <div class="row">
+        {% if error_messages %}
+        <span class="form-text text-danger font-weight-bold">{{ error_messages }}</span>
+        {% endif %}
+    </div>
+</div>
+<form action="{% url 'cc_create_url' %}" method="post">
+    {% csrf_token %}
+
+    {% for field in form %}
+
+    {% if field.error %}
+    {{ field.error }}
+    {% endif %}
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-3">{{field.label}}</div>
+            <div class="col-lg-6">{{field}}</div>
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+{% endblock %}

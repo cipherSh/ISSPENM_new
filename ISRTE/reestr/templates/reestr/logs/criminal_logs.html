@@ -1,0 +1,44 @@
+{% extends "wrapper.html" %}
+{% block content_wrapper %}
+
+    <div class="row">
+        <div class="col">
+            <div class="row font-weight-bold h5 p-0">
+                <div class="col-11 font-weight-bold h5 p-0 m-0">
+                    История досье {{criminal}}
+                </div>
+                <div class="col-1 p-0 m-0">
+                    <a href="{{ criminal.get_absolute_url }}" class="btn btn-primary btn-sm btn-block">Назад</a>
+                </div>
+            </div>
+            <div class="row bg-secondary text-light rounded font-weight-bold">
+                <div class="col-2">Дата и время</div>
+                <div class="col-4">Пользователь</div>
+                <div class="col-4">Действие</div>
+            </div>
+            {% for log in logs %}
+            <div class="row border-bottom">
+                <div class="col-2" style="background-color: Seashell">{{ log.action_time }}</div>
+                <div class="col-4" style="background-color: Snow">{{ log.user }}</div>
+                <div class="col-6" >
+                    {% if log.action_flag == 1 %}
+                        Создан
+                    {% elif log.action_flag == 2 %}
+                        Просмотр
+                    {% elif log.action_flag == 3 %}
+                        Обновлен
+                    {% elif log.action_flag == 4 %}
+                        Удален
+                    {% elif log.action_flag == 5 %}
+                        Добавлен {{ log.message.added }}
+                    {% elif log.action_flag == 6 %}
+                        Исклчен {{ log.message.exclude }}
+                    {% elif log.action_flag == 7 %}
+                        {{ log.message.message }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content_wrapper %}

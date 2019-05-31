@@ -1,0 +1,76 @@
+{% extends "wrapper.html" %}
+{% block title%}Создание пользователя{% endblock %}
+{% block page%}{% endblock %}
+{% block content_wrapper %}
+<div class="shadow px-4 py-3 m-n2 border" style="min-height:570px">
+    <form action="{% url 'user_create_url' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" class="form-control" placeholder="Имя пользователя" name="username"
+                   onclick='document.getElementById("message").innerHTML=""' onchange="userValidate()">
+            <small class="form-text text-muted">Обязательное поле. Не более 150 символов. Только буквы, цифры и символы
+                @/./+/-/_.
+            </small>
+
+            <div class="form-text text-danger" id="message">{% if message %}{{ message }}{% endif %}</div>
+
+        </div>
+        <hr>
+        <div class="form-group">
+            <label for="password">Пароль пользователя</label>
+            <input id="password" type="password" class="form-control" placeholder="Пароль пользователя"
+                   name="password" value="">
+            <small class="form-text text-muted">Ваш пароль не должен совпадать с вашим именем или другой персональной
+                информацией или быть слишком похожим на неё.
+            </small>
+            <small class="form-text text-muted">Ваш пароль должен содержать как минимум 8 символов.</small>
+            <small class="form-text text-muted">Ваш пароль не может быть одним из широко распространённых паролей.
+            </small>
+            <small class="form-text text-muted">Ваш пароль не может состоять только из цифр.</small>
+        </div>
+        <hr>
+        <div class="form-group" id="">
+            <label for="confirmPassword">Подтверждение пароля</label>
+            <input type="password" class="form-control" id="confirmPassword" onchange="validateForm()"
+                   placeholder="Подтверждение пароля" name="confirmPassword" value=""
+                   onclick='document.getElementById("divCheckPasswordMatch").innerHTML=""'>
+            <small class="form-text text-muted">Для подтверждения введите, пожалуйста, пароль ещё раз.</small>
+        </div>
+
+
+        <div class="registrationFormAlert" id="divCheckPasswordMatch">
+        </div>
+        <hr>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    function validateForm () {
+
+    var password1 = document.getElementById('password').value;
+
+    var password2 = document.getElementById('confirmPassword').value;
+
+
+    if (password1 !== password2){
+        document.getElementById("divCheckPasswordMatch").innerHTML="Пароль не совпадает"
+        }
+}
+
+    function userValidate () {
+
+    var username = document.getElementById('password').value;
+
+    if (username.length <= 6){
+        document.getElementById("message").innerHTML="Имя пользователя должна содержать больше 6 символов"
+        }
+}
+
+
+
+</script>
+
+{% endblock content_wrapper %}

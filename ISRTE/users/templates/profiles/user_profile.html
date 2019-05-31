@@ -1,6 +1,6 @@
 {% extends "wrapper.html" %}
 {% block title%}{{profile}} - пользователь системы{% endblock %}
-{% block page%}{{profile}}({{ profile.user}}){% endblock %}
+{% block page%}{% endblock %}
 {% block content_wrapper %}
 <div class="row">
     <div class="col-lg-6">
@@ -35,9 +35,11 @@
             {% if request.user.is_staff %}
             <div class="col">
                 {% if profile.user.is_active %}
-                <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-warning btn-block">Закрыть доступ в систему</a>
+                <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-warning btn-block">Закрыть доступ в
+                    систему</a>
                 {% else %}
-                <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-success btn-block">Открыть доступ в систему</a>
+                <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-success btn-block">Открыть доступ в
+                    систему</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -45,6 +47,11 @@
 
     </div>
     <div class="col-lg-6">
+        <div class="row">
+            <div class="col-12 font-weight-bold mb-1">{% if request.user.profile == profile %}Мои группы{% else %}
+                Группы пользователя {% endif %}
+            </div>
+        </div>
         <div class="row border-bottom bg-secondary rounded text-light">
             <div class="col-md-12 col-lg-12">Группа</div>
         </div>
@@ -57,8 +64,14 @@
 </div>
 <br>
 <div class="row">
-    <div class="col-lg-5 mx-4">
-        <div class="row font-weight-bold">Документы {{profile}}</div>
+    <div class="col-lg-5 mr-5">
+        <div class="row font-weight-bold">
+            {% if request.user.profile == profile %}
+                Мои документы
+            {% else %}
+                Документы пользователя
+            {% endif %}
+        </div>
         <div class="row border-bottom bg-secondary rounded text-light">
             <div class="col-md-6 col-lg-6">ФИО</div>
             <div class="col-md-6 col-lg-6">ИНН</div>
@@ -86,6 +99,7 @@
             </div>
         </a>
         {% endfor %}
+        <a href="{{ profile.get_update_url }}">Update</a>
     </div>
 
 </div>

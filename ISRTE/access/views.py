@@ -2,14 +2,23 @@ from django.shortcuts import render, redirect, HttpResponse, reverse
 from django.views.generic import View
 from datetime import datetime
 
+# forms
+
 from .forms import GroupAccessForm, PersonalAccessForm, GroupAccessUpdateForm, PersonalAccessUpdateForm, \
     RequestToOpenAccessForm, RequestToOpenAcceptForm, RequestToOpenRejectForm, RequestToOpenGroupAccessForm, \
     RequestToOpenGroupAcceptForm
+
+# models
 
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import PersonAccess, GroupAccess, RequestToOpen
 from reestr.models import Criminals
+from users.models import UserLogs
+
+# views
+from users.views import action_logging_view, action_logging_update, action_logging_create, action_logging_delete, \
+    action_logging_added
 
 
 # Create your views here.
@@ -80,7 +89,8 @@ def access_list(request):
         'group_access': group_access,
         'person_access': person_access,
         'docs_requests': docs_requests,
-        'docs_requests_group': docs_requests_group
+        'docs_requests_group': docs_requests_group,
+        'search_url': 'control_access_url'
     }
     return render(request, 'access/access_list.html', context=context)
 
@@ -93,11 +103,11 @@ class GroupAccessUpdate(View):
 
     def post(self, request, pk):
         doc = GroupAccess.objects.get(id=pk)
-        bound_form = GroupAccessUpdateForm(request.POST)
+        bound_form = GroupAccessUpdateForm(request.POST, instance=doc)
 
         if bound_form.is_valid():
-            doc.delete()
             access = bound_form.save()
+            action_logging_update(request, doc)
             return redirect('/access/')
         return render(request, 'access/group_access_create.html', context={'form': bound_form, 'doc': doc})
 
@@ -110,23 +120,25 @@ class PersonalAccessUpdate(View):
 
     def post(self, request, pk):
         doc = PersonAccess.objects.get(id=pk)
-        bound_form = PersonalAccessUpdateForm(request.POST)
+        bound_form = PersonalAccessUpdateForm(request.POST, instance=doc)
 
         if bound_form.is_valid():
-            doc.delete()
             access = bound_form.save()
+            action_logging_update(request, doc)
             return redirect('/access/')
         return render(request, 'access/personal_access_create.html', context={'form': bound_form, 'doc': doc})
 
 
 def group_access_delete(request, pk):
     access = GroupAccess.objects.get(id=pk)
+    action_logging_delete(request, access)
     access.delete()
     return redirect('/access/')
 
 
 def personal_access_delete(request, pk):
     access = PersonAccess.objects.get(id=pk)
+    action_logging_delete(request, access)
     access.delete()
     return redirect('/access/')
 
@@ -154,6 +166,7 @@ class RequestToOpenPersonalAccess(View):
             new_request.accept = False
             new_request.date_request = datetime.now()
             new_request.save()
+            action_logging_create(request, new_request)
             return redirect(criminal)
 
         context = {
@@ -186,6 +199,7 @@ class RequestToOpenGroupAccess(View):
             new_request.accept = False
             new_request.date_request = datetime.now()
             new_request.save()
+            action_logging_create(request, new_request)
             return redirect(criminal)
 
         context = {
@@ -212,6 +226,7 @@ class GroupAccessCreate(View):
             if old_access:
                 old_access.delete()
             new_access.save()
+            action_logging_create(request, new_access)
             return redirect(criminal)
         return render(request, 'access/group_access_create.html', context={'form': bound_form, 'criminal': criminal})
 
@@ -233,6 +248,7 @@ class PersonalAccessCreate(View):
             if old_access:
                 old_access.delete()
             new_access.save()
+            action_logging_create(request, new_access)
             return redirect(criminal)
         return render(request, 'access/personal_access_create.html', context={'form': bound_form, 'criminal': criminal})
 
@@ -267,6 +283,8 @@ class RequestToOpenAccept(View):
             request_to_open.accept = True
             request_to_open.date_check = datetime.now()
             request_to_open.save()
+            action_logging_create(request, new_access)
+            action_logging_update(request, request_to_open)
             return redirect('/')
         return render(request, 'access/personal_access_create.html', context=context)
 
@@ -301,6 +319,8 @@ class RequestToOpenGroupAccept(View):
             request_to_open.accept = True
             request_to_open.date_check = datetime.now()
             request_to_open.save()
+            action_logging_create(request, new_access)
+            action_logging_update(request, request_to_open)
             return redirect('/')
         return render(request, 'access/personal_access_create.html', context=context)
 
@@ -329,5 +349,6 @@ class RequestToOpenReject(View):
             request_to_open.check = True
             request_to_open.date_check = datetime.now()
             request_to_open.save()
+            action_logging_update(request, request_to_open)
             return redirect('/registry/')
         return render(request, 'access/request_reject.html', context=context)

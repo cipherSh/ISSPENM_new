@@ -11,7 +11,7 @@ class Occupation(models.Model):
     remarks = models.TextField(verbose_name='Примечание')
 
     class Meta:
-        verbose_name = 'Тип'
+        verbose_name = 'Тип деятельноти'
         verbose_name_plural = 'Тип деятельности'
 
     def __str__(self):
@@ -43,8 +43,8 @@ class RelativeRelation(models.Model):
     inverse = models.CharField(max_length=200, verbose_name='Обратное')
 
     class Meta:
-        verbose_name = 'Вид связи'
-        verbose_name_plural = 'Виды связей'
+        verbose_name = 'Родственное отношение'
+        verbose_name_plural = 'Родственные отношении'
         ordering = ["type"]
 
     def __str__(self):
@@ -135,8 +135,8 @@ class Criminals(models.Model):
     check = models.BooleanField(verbose_name='Подтверждение', default=False)
 
     class Meta:
-        verbose_name = 'Террориста или экстремиста'
-        verbose_name_plural = 'Террористы и экстремисти'
+        verbose_name = 'Досье'
+        verbose_name_plural = 'Реестр'
         ordering = ["last_name", "first_name", "patronymic"]
 
     def __str__(self):
@@ -195,6 +195,9 @@ class Criminals(models.Model):
 
     def get_request_to_open_group_url(self):
         return reverse('request_to_open_group_url', kwargs={'pk': self.id})
+
+    def get_logs_url(self):
+        return reverse('criminal_logs_url', kwargs={'pk': self.id})
 
 
 class Persons(models.Model):
@@ -261,7 +264,7 @@ class Persons(models.Model):
 
     class Meta:
         verbose_name = 'Персона'
-        verbose_name_plural = 'Люди'
+        verbose_name_plural = 'Гражданины'
         ordering = ["last_name", "first_name", "patronymic"]
 
     def __str__(self):
@@ -274,7 +277,7 @@ class ContactType(models.Model):
 
     class Meta:
         verbose_name = 'Тип контакт'
-        verbose_name_plural = 'Виды контакта'
+        verbose_name_plural = 'Типы контакта'
         ordering = ["type_contact"]
 
     def __str__(self):
@@ -293,14 +296,17 @@ class Contacts(models.Model):
         ordering = ["criminal_id"]
 
     def __str__(self):
-        return str(self.criminal_id) + '--' + str(self.type_contact) + ':' + self.contact
+        return str(self.type_contact) + ': ' + self.contact
+
+    def _record_log(self):
+        return '%s %s' % (self.contact)
 
 
 class CriminalAddresses(models.Model):
     criminal_id = models.ForeignKey(Criminals, verbose_name='ФИО', on_delete=models.CASCADE)
     KIND_CHOICES = (
         ('residence', 'Место проживание'),
-        ('registration', 'Место прориски')
+        ('registration', 'Место прописки')
     )
     kind = models.CharField(max_length=20, choices=KIND_CHOICES, default='registration', verbose_name='Тип адреса')
     region = models.CharField(max_length=20, verbose_name='Регион', null=True, blank=True)
@@ -315,8 +321,8 @@ class CriminalAddresses(models.Model):
     remarks = models.TextField(null=True, blank=True, verbose_name='Примечание')
 
     class Meta:
-        verbose_name = 'Адресс террориста и экстремиста'
-        verbose_name_plural = 'Адреса террористов и экстремистов'
+        verbose_name = 'Адрес'
+        verbose_name_plural = 'Адреса'
         ordering = ["criminal_id"]
 
     def __str__(self):
@@ -342,8 +348,8 @@ class PersonAddresses(models.Model):
     remarks = models.TextField(blank=True, verbose_name='Примечание')
 
     class Meta:
-        verbose_name = 'Адресс Родственника и контактируемого лица'
-        verbose_name_plural = 'Адреса Родственников и контактируемых лиц'
+        verbose_name = 'Адрес гражданина'
+        verbose_name_plural = 'Адрес граждан'
         ordering = ["person_id"]
 
     def __int__(self):
@@ -414,8 +420,8 @@ class CriminalCaseCriminals(models.Model):
     criminal_id = models.ForeignKey(Criminals, verbose_name='Люди проходящие по делу', on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = 'Уголовное дело -- ответчики'
-        verbose_name_plural = 'Уголовное дело -- ответчики'
+        verbose_name = 'Фигурант УД'
+        verbose_name_plural = 'Фигуранты УД'
 
     def __str__(self):
         return str(self.criminal_case) + ' - ' + str(self.criminal_id)

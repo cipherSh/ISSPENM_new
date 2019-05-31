@@ -5,6 +5,9 @@ from access.views import GroupAccessCreate, PersonalAccessCreate, RequestToOpenP
 urlpatterns = [
     path('', views.homepage, name='homepage_url'),
     path('registry/', views.registry_page, name='registry_url'),
+    path('registry/my_docs', views.my_doc, name='my_docs_url'),
+    path('registry/requests', views.qq_list, name='qq_list_url'),
+    path('registry/uncheck', views.uncheck_docs, name='uncheck_docs_url'),
 
     path('registry/criminals/', views.criminals_list, name='criminals_list_url'),
     path('registry/criminals/create/', views.CriminalCreateView.as_view(), name='criminal_create_url'),
@@ -12,6 +15,7 @@ urlpatterns = [
     path('registry/criminal/<int:pk>', views.criminal_detail, name="criminal_detail_url"),
     path('registry/criminal/<int:pk>/update/', views.CriminalUpdateView.as_view(), name="criminal_update_url"),
     path('registry/criminal/<int:pk>/delete/', views.CriminalDeleteView.as_view(), name="criminal_delete_url"),
+    path('registry/criminal/<int:pk>/logs/', views.criminal_logs, name="criminal_logs_url"),
 
     path('registry/criminal/<int:pk>/access/group/create/', GroupAccessCreate.as_view(),
          name="group_access_create_url"),
@@ -46,12 +50,14 @@ urlpatterns = [
 
 
     path('registry/cc/', views.cc_list, name="cc_list_url"),
+    path('registry/cc/create/', views.CriminalCaseCreateView.as_view(), name="cc_create_url"),
     path('registry/cc/<int:pk>', views.cc_detail, name="cc_detail_url"),
     path('registry/cc/<int:pk>/update', views.CriminalCaseUpdateView.as_view(), name="cc_update_url"),
     path('registry/cc/<int:pk>/delete', views.criminal_case_delete, name="cc_delete_url"),
     path('registry/cc/<int:pk>/add', views.add_existing_criminal_to_cc, name="cc_add_existing_criminal_url"),
     path('registry/cc/<int:pk>/add/new', views.AddNewCriminalToCCView.as_view(), name="cc_add_new_criminal_url"),
     path('registry/cc/<int:pk>/delete/member', views.cc_criminal_delete, name="cc_criminal_delete_url"),
+
 
 
     path('registry/manhunt/', views.manhunt_list, name="manhunt_list_url"),

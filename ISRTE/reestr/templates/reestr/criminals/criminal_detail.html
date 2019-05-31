@@ -2,12 +2,6 @@
 {% load staticfiles %}
 {% block title %}{{ criminal.last_name }} {{ criminal.first_name }} {{ criminal.patronymic }}{% endblock title %}
 
-{% block show_list %}
-<div class="row">
-    <div class="col-lg-10"></div>
-    <div class="col-lg-2"><a href="{% url 'criminals_list_url' %}">Показать весь список</a></div>
-</div>
-{% endblock %}
 
 {% block content_wrapper %}
 
@@ -60,7 +54,11 @@
     {% include "reestr/criminals/includes/include_criminal_dosye.html"%}
     <!-- информация -->
     <div class="col-lg-2 pt-2 border-left">
-
+        {% if request.user.is_superuser %}
+        <a href="{{ criminal.get_logs_url }}" class="btn btn-outline-dark btn-block btn-sm mb-2">
+            История
+        </a>
+        {% endif %}
         {% if perms.reestr.change_criminals %}
         <a href="{{ criminal.get_update_url }}" class="btn btn-outline-primary btn-sm">
             <img src="{% static 'access/icon_redacting.png' %}" alt="Редактировать">
@@ -140,7 +138,7 @@
 {% endif %}
 
 {% if convictions %}
-{% include "reestr/criminals/includes/include_conviction.html"%}
+{% include "reestr/criminals/includes/include_criminal_conviction.html"%}
 {% endif %}
 
 {% if criminal_case %}

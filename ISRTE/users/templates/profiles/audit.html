@@ -1,0 +1,20 @@
+{% extends "wrapper.html" %}
+{% block content_wrapper %}
+
+    <div class="row">
+        <div class="col">
+            <div class="row bg-secondary text-light rounded">
+                <div class="col">Дата и время</div>
+                <div class="col">ФИО</div>
+                <div class="col">Действие</div>
+            </div>
+            {% for log in audit %}
+            <div class="row border-bottom">
+                <div class="col">{{ log.data }}</div>
+                <div class="col">{{ log.user }}</div>
+                <div class="col">{{ log.act }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content_wrapper %}

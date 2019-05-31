@@ -34,7 +34,7 @@
         </div>
         <div class="row">
             <div class="col-lg-5 font-weight-bold">Пол:</div>
-            <div class="col-lg-6">{{ criminal.gender }}</div>
+            <div class="col-lg-6">{% if criminal.gender == 'M'%}Мужской{%else%}Женский{%endif%}</div>
         </div>
         <div class="row">
             <div class="col-lg-5 font-weight-bold">Гражданство:</div>

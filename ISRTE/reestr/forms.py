@@ -68,6 +68,16 @@ class CriminalCaseCreateForm(forms.ModelForm):
         model = CriminalCase
         fields = ['number', 'year', 'article', 'organ', 'date_arousal', 'date_suspension', 'remarks']
 
+        widgets = {
+            'number': forms.TextInput(attrs={'class': 'form-control'}),
+            'year': forms.TextInput(attrs={'class': 'form-control'}),
+            'article': forms.TextInput(attrs={'class': 'form-control'}),
+            'organ': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_arousal': forms.DateInput(attrs={'class': 'form-control'}),
+            'date_suspension': forms.DateInput(attrs={'class': 'form-control'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
 
 class CriminalsCriminalCaseAddForm(forms.ModelForm):
     class Meta:
@@ -83,11 +93,21 @@ class AddExistingCriminalForm(forms.ModelForm):
             'criminal_id': forms.Select(attrs={'class': 'form-control'})
         }
 
+
 class CriminalCaseUpdateForm(forms.ModelForm):
     class Meta:
         model = CriminalCase
         fields = ['number', 'year', 'article', 'organ', 'date_arousal', 'date_suspension', 'remarks']
 
+        widgets = {
+            'number': forms.TextInput(attrs={'class': 'form-control'}),
+            'year': forms.TextInput(attrs={'class': 'form-control'}),
+            'article': forms.TextInput(attrs={'class': 'form-control'}),
+            'organ': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_arousal': forms.DateInput(attrs={'class': 'form-control'}),
+            'date_suspension': forms.DateInput(attrs={'class': 'form-control'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control'}),
+        }
 
 class CriminalManhuntAddForm(forms.ModelForm):
     class Meta:

@@ -1,7 +1,7 @@
 {% extends "wrapper.html" %}
 
 {% block content_wrapper %}
-<div class="row"><h1>Редактирование уголовное дело <b>{{cc}}</b></h1></div>
+<div class="row"><h3>Редактирование уголовное дело <b>{{cc}}</b></h3></div>
 <br>
     <form action="{{ cc.get_update_url }}" method="post">
         {% csrf_token %}
@@ -12,7 +12,7 @@
             {% endif %}
             <div class="form-group">
                 <div class="row">
-                    <div class="col-lg-3">{{field.label}}</div>
+                    <div class="col-lg-3 form-text font-weight-bold">{{field.label}}</div>
                     <div class="col-lg-6">{{field}}</div>
                 </div>
             </div>

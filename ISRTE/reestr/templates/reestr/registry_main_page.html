@@ -1,10 +1,7 @@
 {% extends "wrapper.html" %}
 {% load static %}
 {% block show_list %}
-<div class="row">
-    <div class="col-lg-10"></div>
-    <div class="col-lg-2"><a href="{% url 'criminals_list_url' %}">Показать весь список</a></div>
-</div>
+
 {% endblock %}
 {% block content_wrapper %}
 
@@ -15,44 +12,35 @@
 
         <!-- Мои документы -->
         {% if my_docs %}
-        <div class="row">
-            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
-                {% include "reestr/includes/include_my_docs_list.html" %}
-            </div>
-        </div>
+
+            {% include "reestr/includes/include_my_docs_list.html" %}
+
         {% endif %}
 
         <!-- Недавно добавленные -->
-        <div class="row">
-            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
-                {% include "reestr/includes/include_criminals_list.html" %}
-            </div>
-        </div>
+
+
+        {% include "reestr/includes/include_criminals_list.html" %}
+
         <!-- Не подтвержденные документы-->
         {% if uncheck_docs %}
-        <div class="row">
-            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
+
                 {% include "reestr/includes/include_uncheck_docs_list.html" %}
-            </div>
-        </div>
+
         {% endif %}
 
         <!-- Индивидуальные запросы-->
         {% if docs_requests %}
-        <div class="row">
-            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-5 shadow-sm">
+
                 {% include "reestr/includes/include_requests.html" %}
-            </div>
-        </div>
+
         {% endif %}
 
         <!-- Групповые запросы-->
         {% if docs_requests_group %}
-        <div class="row">
-            <div class="col-lg-12 border p-3 px-4 mx-n1 mb-4 shadow-sm">
+
                 {% include "reestr/includes/include_group_requests.html" %}
-            </div>
-        </div>
+
         {% endif %}
     </div>
 
