@@ -126,6 +126,10 @@ class UserUpdateView(View):
 @login_required
 def users_list(request):
     users_list = Profile.objects.all().order_by('role_id')
+    search_query = request.GET.get('search_query_text', '')
+
+    if search_query:
+        users_list = Profile.objects.all().order_by('role_id')
     context = {
         'wrapper_title': "Пользователи",
         'search_url': 'users_list_url',
@@ -188,13 +192,43 @@ def group_list(request):
 
 def inactive_user(request, pk):
     profile = Profile.objects.get(id=pk)
+    log_message = ''
     if profile.user.is_active:
         profile.user.is_active = False
         profile.user.save()
+        log_message = 'Доступ к систему закрыть'
     else:
         profile.user.is_active = True
         profile.user.save()
+        log_message = 'Доступ к систему открыть'
+    action_logging_other(request, profile, log_message)
     return redirect(profile)
+
+
+@login_required
+def profile_logs(request, pk):
+    profile = Profile.objects.get(id=pk)
+    logs = object_logs(request, profile)
+    context = {
+        'profile': profile,
+        'logs': logs,
+        'wrapper_title': 'Пользователи'
+    }
+    return render(request, 'reestr/logs/criminal_logs.html', context=context)
+
+
+@login_required
+def user_acts(request, pk):
+    profile = Profile.objects.get(id=pk)
+    acts = UserLogs.objects.filter(user=profile)
+    context = {
+        'profile': profile,
+        'logs': acts,
+        'wrapper_title': 'Пользователи'
+    }
+    return render(request, 'profiles/user_logs.html', context=context)
+
+
 
 
 def object_logs(request, object):

@@ -49,6 +49,12 @@ class Profile(models.Model):
     def get_update_url(self):
         return reverse('user_profile_url', kwargs={'pk': self.user.id})
 
+    def get_logs_url(self):
+        return reverse('profile_logs_url', kwargs={'pk': self.user.id})
+
+    def get_user_logs_url(self):
+        return reverse('user_acts_url', kwargs={'pk': self.user.id})
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

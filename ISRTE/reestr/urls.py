@@ -57,13 +57,17 @@ urlpatterns = [
     path('registry/cc/<int:pk>/add', views.add_existing_criminal_to_cc, name="cc_add_existing_criminal_url"),
     path('registry/cc/<int:pk>/add/new', views.AddNewCriminalToCCView.as_view(), name="cc_add_new_criminal_url"),
     path('registry/cc/<int:pk>/delete/member', views.cc_criminal_delete, name="cc_criminal_delete_url"),
-
+    path('registry/cc/<int:pk>/logs', views.cc_logs, name="cc_logs_url"),
 
 
     path('registry/manhunt/', views.manhunt_list, name="manhunt_list_url"),
     path('registry/manhunt/<int:pk>', views.manhunt_detail, name="manhunt_detail_url"),
     path('registry/manhunt/<int:pk>/update', views.ManhuntUpdateView.as_view(), name="manhunt_update_url"),
-    path('registry/manhunt/<int:pk>/delete', views.ManhuntDeleteView.as_view(), name="manhunt_delete_url")
+    path('registry/manhunt/<int:pk>/delete', views.ManhuntDeleteView.as_view(), name="manhunt_delete_url"),
+    path('registry/manhunt/<int:pk>/logs', views.manhunt_logs, name="manhunt_logs_url"),
+
+
+    path('registry/contacts/<int:pk>/delete', views.contacts_detail_delete, name="contact_detail_delete_url"),
 
 
 ]

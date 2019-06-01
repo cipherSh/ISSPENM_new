@@ -1,17 +1,6 @@
 {% extends "wrapper.html" %}
 {% load static %}
-{% block page%}
-<div class="col-lg-5"></div>
-<div class="col-lg-3"><h4>Уголовное дело</h4></div>
-<div class="col-lg-4 p-1">
-    <div class="row">
-        <div class="col-lg-4"></div>
-        <div class="col-lg-4"></div>
-        <div class="col-lg-4"><a href="" class="btn btn-success btn-sm btn-block">Добавить</a></div>
-    </div>
 
-</div>
-{% endblock %}
 {% block content_wrapper %}
 <div class="row border shadow pt-5" style="min-height:570px">
     <div class="col">
@@ -45,6 +34,11 @@
             </div>
             <div class="col-lg-2 my-3">
                 <div class="col-lg-12">
+                    {% if request.user.is_superuser %}
+                    <a href="{{ case.get_logs_url }}" class="btn btn-outline-dark btn-block btn-sm mb-2">
+                        История
+                    </a>
+                    {% endif %}
                     <a href="{{ case.get_update_url }}" class="btn btn-outline-primary">
                         <img src="{% static 'access/icon_redacting.png' %}" alt="Исключить">
                     </a>

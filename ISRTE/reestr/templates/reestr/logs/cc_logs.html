@@ -4,38 +4,12 @@
     <div class="row">
         <div class="col">
             <div class="row font-weight-bold h5 p-0">
-                {% if criminal%}
                 <div class="col-11 font-weight-bold h5 p-0 m-0">
-                    История досье {{criminal}}
+                    История уголовного дела {{ cc }}
                 </div>
                 <div class="col-1 p-0 m-0">
                     <a href="{{ criminal.get_absolute_url }}" class="btn btn-primary btn-sm btn-block">Назад</a>
                 </div>
-                {% endif %}
-                {% if cc %}
-                <div class="col-11 font-weight-bold h5 p-0 m-0">
-                    История уголовно дела № {{cc}}
-                </div>
-                <div class="col-1 p-0 m-0">
-                    <a href="{{ cc.get_absolute_url }}" class="btn btn-primary btn-sm btn-block">Назад</a>
-                </div>
-                {% endif %}
-                {% if manhunt %}
-                <div class="col-11 font-weight-bold h5 p-0 m-0">
-                    История розыскного дела №{{manhunt}}
-                </div>
-                <div class="col-1 p-0 m-0">
-                    <a href="{{ cc.get_absolute_url }}" class="btn btn-primary btn-sm btn-block">Назад</a>
-                </div>
-                {% endif %}
-                {% if profile %}
-                <div class="col-11 font-weight-bold h5 p-0 m-0">
-                    История профиля {{profile}}
-                </div>
-                <div class="col-1 p-0 m-0">
-                    <a href="{{ profile.get_update_url }}" class="btn btn-primary btn-sm btn-block">Назад</a>
-                </div>
-                {% endif %}
             </div>
             <div class="row bg-secondary text-light rounded font-weight-bold">
                 <div class="col-2">Дата и время</div>

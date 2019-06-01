@@ -13,5 +13,20 @@
             <div class="col-lg-6">{{ relative.person_id}}</div>
         </div>
         {% endfor %}
+        {% if similar %}
+        {% for sim in similar %}
+        <div class="row border-bottom rounded">
+            <div class="col text-primary text-right small">{{sim.man}}</div>
+        </div>
+        {% for person in sim.relatives %}
+
+        <div class="row border-bottom rounded">
+            <div class="col-lg-6">{{ relative.relation }}</div>
+            <div class="col-lg-6">{{ relative.person_id}}</div>
+        </div>
+
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
     </div>
 </div>

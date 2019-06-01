@@ -298,6 +298,9 @@ class Contacts(models.Model):
     def __str__(self):
         return str(self.type_contact) + ': ' + self.contact
 
+    def get_delete_url(self):
+        return reverse('contact_detail_delete_url', kwargs={'pk': self.id})
+
     def _record_log(self):
         return '%s %s' % (self.contact)
 
@@ -414,6 +417,9 @@ class CriminalCase(models.Model):
     def get_add_new_criminal_url(self):
         return reverse('cc_add_new_criminal_url', kwargs={'pk': self.id})
 
+    def get_logs_url(self):
+        return reverse('cc_logs_url', kwargs={'pk': self.id})
+
 
 class CriminalCaseCriminals(models.Model):
     criminal_case = models.ForeignKey(CriminalCase, verbose_name='Уголовное дело', on_delete=models.CASCADE)
@@ -462,6 +468,9 @@ class Manhunt(models.Model):
 
     def get_delete_url(self):
         return reverse('manhunt_delete_url', kwargs={'pk': self.id})
+
+    def get_logs_url(self):
+        return reverse('manhunt_logs_url', kwargs={'pk': self.id})
 
 
 class Conviction(models.Model):

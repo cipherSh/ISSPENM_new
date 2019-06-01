@@ -1,25 +1,38 @@
+{% load static %}
 <div class="row rounded border mb-5">
     <div class="col-lg-12 rounded">
         <div class="row d-flex justify-content-center rounded text-align-center border round bg-secondary">
             <div class="text-light"><h4>Контактные данные</h4></div>
         </div>
         <div class="row border-bottom rounded font-weight-bold">
-            <div class="col-lg-4">Тип контакта</div>
-            <div class="col-lg-4">Контакт</div>
+            <div class="col-lg-5">Тип контакта</div>
+            <div class="col-lg-5">Контакт</div>
         </div>
         {% for contact in contacts_detail %}
         <div class="row border-bottom rounded">
-            <div class="col-lg-4">{{contact.type_contact}}</div>
-            <div class="col-lg-4">{{contact.contact}}</div>
+            <div class="col-lg-5">{{contact.type_contact}}</div>
+            <div class="col-lg-5">{{contact.contact}}</div>
+            <div class="col-lg-2 text-right">
+                <a href="{{contact.get_delete_url}}" class="">
+                    <img src="{% static 'access/icon_delete2.png' %}" alt="Удалить">
+                </a>
+            </div>
         </div>
         {% endfor %}
         {% if similar %}
         {% for sim in similar %}
+        <div class="row border-bottom rounded">
+            <div class="col text-right small form-text text-primary">{{sim.man}}</div>
+        </div>
         {% for contact in sim.contacts_detail %}
         <div class="row border-bottom rounded">
-            <div class="col-lg-4">{{contact.type_contact}}</div>
+            <div class="col-lg-5">{{contact.type_contact}}</div>
             <div class="col-lg-5">{{contact.contact}}</div>
-            <div class="col-lg-3 text-right small form-text text-primary">{{sim.man}}</div>
+            <div class="col-lg-2 text-right">
+                <a href="{{contact.get_delete_url}}" class="">
+                    <img src="{% static 'access/icon_delete2.png' %}" alt="Удалить">
+                </a>
+            </div>
         </div>
         {% endfor %}
         {% endfor %}

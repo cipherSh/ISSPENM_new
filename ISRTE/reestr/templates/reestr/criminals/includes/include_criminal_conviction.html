@@ -19,5 +19,21 @@
             <div class="col-lg-2">{{conviction.date_release}}</div>
         </div>
         {% endfor %}
+        {% if similar %}
+        {% for sim in similar %}
+        <div class="row border-bottom rounded">
+            <div class="col text-primary text-right small">{{sim.man}}</div>
+        </div>
+        {% for conviction in sim.convictions %}
+        <div class="row border-bottom rounded">
+            <div class="col-lg-2">{{conviction.criminal_case_number}}/{{conviction.criminal_case_year}}</div>
+            <div class="col-lg-3">{{conviction.criminal_case_organ}}</div>
+            <div class="col-lg-3">{{conviction.law_article}}</div>
+            <div class="col-lg-2">{{conviction.date_sentence}}</div>
+            <div class="col-lg-2">{{conviction.date_release}}</div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
     </div>
 </div>

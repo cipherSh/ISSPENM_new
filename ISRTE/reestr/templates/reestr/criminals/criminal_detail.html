@@ -83,7 +83,7 @@
             <span class="mx-2">Дата создания:</span>
             <span class="text-primary">{{criminal.created}}</span>
 
-            <span class="mx-2">Уровень секретности:</span>
+            <span class="mx-2">Метка доступа:</span>
 
             <span class="text-primary">{{criminal.confident}}</span>
 
@@ -121,7 +121,7 @@
 </div>
 
 
-{% if address %}
+{% if address or similar %}
 {% include "reestr/criminals/includes/include_criminal_address.html"%}
 {% endif %}
 

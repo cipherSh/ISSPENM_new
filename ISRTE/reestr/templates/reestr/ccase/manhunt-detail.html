@@ -20,13 +20,18 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-lg-6"></div>
-            <div class="col-lg-2 text-right">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4 text-right">
+                {% if request.user.is_superuser %}
+                <a href="{{ manhunt.get_logs_url }}" class="btn btn-outline-dark py-2">
+                    История
+                </a>
+                {% endif %}
                 <a href="{{ manhunt.get_update_url }}" class="btn btn-outline-primary">
-                    <img src="{% static 'access/icon_redacting.png' %}" alt="Исключить">
+                    <img src="{% static 'access/icon_redacting.png' %}" alt="Редакирование">
                 </a>
                 <a href="{{ manhunt.get_delete_url }}" class="btn btn-outline-danger">
-                    <img src="{% static 'access/icon_delete_32.png' %}" alt="Исключить">
+                    <img src="{% static 'access/icon_delete_32.png' %}" alt="Удалить">
                 </a>
             </div>
         </div>

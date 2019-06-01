@@ -1,108 +1,118 @@
 {% extends "wrapper.html" %}
+{% load static %}
 {% block title%}{{profile}} - пользователь системы{% endblock %}
 {% block page%}{% endblock %}
 {% block content_wrapper %}
-<div class="row">
-    <div class="col-lg-6">
-        <div class="row mb-1">
-            <div class="col-lg-3"></div>
-            <div class="col font-weight-bold">{{ profile }}</div>
-        </div>
-        <div class="row mb-1">
-            <div class="col font-weight-bold">Зарегистрирован</div>
-            <div class="col">{{ profile.user.date_joined }}</div>
-        </div>
-        <div class="row mb-1">
-            <div class="col font-weight-bold">Роль пользователя</div>
-            <div class="col">{{ profile.role_id }}</div>
-        </div>
-        <div class="row mb-1">
-            <div class="col font-weight-bold text-danger">Уровень доверия</div>
-            <div class="col">{{ profile.trust_level_id }}</div>
-        </div>
-        <div class="row mb-1">
-            <div class="col font-weight-bold text-warning">Последний вход в систему</div>
-            <div class="col">{{ profile.user.last_login }}</div>
-        </div>
-        <div class="row mb-1">
-            <div class="col font-weight-bold text-success">
-                {% if profile.user.is_active %}
-                Пользователь активен
-                {% else %}
-                Пользователь неактивен
-                {% endif %}
-            </div>
-            {% if request.user.is_staff %}
-            <div class="col">
-                {% if profile.user.is_active %}
-                <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-warning btn-block">Закрыть доступ в
-                    систему</a>
-                {% else %}
-                <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-success btn-block">Открыть доступ в
-                    систему</a>
-                {% endif %}
-            </div>
-            {% endif %}
-        </div>
-
-    </div>
-    <div class="col-lg-6">
+<div class="row border shadow" style="min-height:570px">
+    <div class="col p-5">
         <div class="row">
-            <div class="col-12 font-weight-bold mb-1">{% if request.user.profile == profile %}Мои группы{% else %}
-                Группы пользователя {% endif %}
+            <div class="col-lg-6">
+                <div class="row mb-1">
+                    <div class="col-lg-3"></div>
+                    <div class="col font-weight-bold">{{ profile }}</div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col font-weight-bold">Зарегистрирован</div>
+                    <div class="col">{{ profile.user.date_joined }}</div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col font-weight-bold">Роль пользователя</div>
+                    <div class="col">{{ profile.role_id }}</div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col font-weight-bold">Уровень доверия</div>
+                    <div class="col">{{ profile.trust_level_id }}</div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col font-weight-bold">Последний вход в систему</div>
+                    <div class="col">{{ profile.user.last_login }}</div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col font-weight-bold text-success">
+                        {% if profile.user.is_active %}
+                        Пользователь активен
+                        {% else %}
+                        Пользователь неактивен
+                        {% endif %}
+                    </div>
+                    {% if request.user.is_superuser %}
+                    <div class="col">
+                        {% if profile.user.is_active %}
+                        <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-warning btn-block">Закрыть
+                            доступ в
+                            систему</a>
+                        {% else %}
+                        <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-success btn-block">Открыть
+                            доступ в
+                            систему</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="col-lg-6">
+                <div class="row p-0">
+                    <div class="col-2"></div>
+                    <div class="col-3">
+                        <a href="{{ profile.get_logs_url }}" class="btn btn-secondary btn-block">История</a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ profile.get_user_logs_url }}" class="btn btn-info btn-block">Журнал действий</a>
+                    </div>
+                    <div class="col-1 mx-1">
+                        <a href="" class="btn btn-outline-primary btn-sm">
+                            <img src="{% static 'access/icon_redacting.png' %}" alt="Редактировать">
+                        </a>
+                    </div>
+                    <div class="col-1 mx-1">
+                        <a href="" class="btn btn-outline-danger btn-sm">
+                            <img src="{% static 'access/icon_delete_32.png'%}" alt="Удалить">
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 font-weight-bold mb-1">
+                        {% if request.user.profile == profile %}Мои группы
+                        {% else%}
+                        Группы пользователя {% endif %}
+                    </div>
+                </div>
+                <div class="row border-bottom bg-secondary rounded text-light">
+                    <div class="col-md-12 col-lg-12">Группа</div>
+                </div>
+                {% for group in profile.user.groups.all %}
+                <div class="row border-bottom rounded">
+                    <div class="col-md-12 col-lg-12">{{ group }}</div>
+                </div>
+                {% endfor %}
             </div>
         </div>
-        <div class="row border-bottom bg-secondary rounded text-light">
-            <div class="col-md-12 col-lg-12">Группа</div>
+        <br>
+        <div class="row">
+            <div class="col mr-5">
+                <div class="row font-weight-bold">
+                    {% if request.user.profile == profile %}
+                    Мои документы
+                    {% else %}
+                    Документы пользователя
+                    {% endif %}
+                </div>
+                <div class="row border-bottom bg-secondary rounded text-light">
+                    <div class="col-md-6 col-lg-6">ФИО</div>
+                    <div class="col-md-6 col-lg-6">ИНН</div>
+                </div>
+                {% for doc in user_docs%}
+                <a href="{{doc.get_absolute_url}}">
+                    <div class="row border-bottom rounded text-dark">
+                        <div class="col-md-6 col-lg-6">{{ doc }}</div>
+                        <div class="col-md-6 col-lg-6">{{ doc.INN }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
         </div>
-        {% for group in profile.user.groups.all %}
-        <div class="row border-bottom rounded">
-            <div class="col-md-12 col-lg-12">{{ group }}</div>
-        </div>
-        {% endfor %}
     </div>
 </div>
-<br>
-<div class="row">
-    <div class="col-lg-5 mr-5">
-        <div class="row font-weight-bold">
-            {% if request.user.profile == profile %}
-                Мои документы
-            {% else %}
-                Документы пользователя
-            {% endif %}
-        </div>
-        <div class="row border-bottom bg-secondary rounded text-light">
-            <div class="col-md-6 col-lg-6">ФИО</div>
-            <div class="col-md-6 col-lg-6">ИНН</div>
-        </div>
-        {% for doc in user_docs%}
-        <a href="{{doc.get_absolute_url}}">
-            <div class="row border-bottom rounded text-dark">
-                <div class="col-md-6 col-lg-6">{{ doc }}</div>
-                <div class="col-md-6 col-lg-6">{{ doc.INN }}</div>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-    <div class="col-lg-6 m-0">
-        <div class="row font-weight-bold">Доступные документы {{profile}}</div>
-        <div class="row border-bottom bg-secondary rounded text-light">
-            <div class="col-md-6 col-lg-6">ФИО</div>
-            <div class="col-md-6 col-lg-6">ИНН</div>
-        </div>
-        {% for doc in p_acc%}
-        <a href="{{ doc.doc_id.get_absolute_url }}">
-            <div class="row border-bottom rounded text-dark">
-                <div class="col-md-6 col-lg-6">{{ doc.doc_id }}</div>
-                <div class="col-md-6 col-lg-6">{{ doc.doc_id.INN }}</div>
-            </div>
-        </a>
-        {% endfor %}
-        <a href="{{ profile.get_update_url }}">Update</a>
-    </div>
-
-</div>
-
 
 {% endblock content_wrapper %}

@@ -1,9 +1,9 @@
 <div class="row rounded border mb-5">
     <div class="col-lg-12 round">
-        <div class="row d-flex bg-dark justify-content-center text-align-center">
+        <div class="row d-flex bg-secondary justify-content-center text-align-center">
             <div class="text-light"><h4>Уголовное дело</h4></div>
         </div>
-        <div class="row border-bottom bg-secondary rounded text-light">
+        <div class="row border-bottom rounded font-weight-bold">
             <div class="col-lg-2">№ УД</div>
             <div class="col-lg-3">Возбудивший орган</div>
             <div class="col-lg-3">Статья</div>
@@ -19,5 +19,21 @@
             <div class="col-lg-2">{{ case.criminal_case.date_suspension }}</div>
         </div>
         {% endfor %}
+        {% if similar %}
+        {% for sim in similar %}
+        <div class="row border-bottom rounded">
+            <div class="col text-primary text-right small">{{sim.man}}</div>
+        </div>
+        {% for case in sim.criminal_case %}
+        <div class="row border-bottom rounded">
+            <div class="col-lg-2">{{ case.criminal_case.number }}/{{ case.criminal_case.year}}</div>
+            <div class="col-lg-3">{{ case.criminal_case.organ }}</div>
+            <div class="col-lg-3">{{ case.criminal_case.article }}</div>
+            <div class="col-lg-2">{{ case.criminal_case.date_arousal }}</div>
+            <div class="col-lg-2">{{ case.criminal_case.date_suspension }}</div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
     </div>
 </div>

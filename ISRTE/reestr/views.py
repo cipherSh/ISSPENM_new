@@ -244,6 +244,7 @@ def criminal_logs(request, pk):
 
 def similar_criminal(request, criminal):
     similar = Criminals.objects.filter(INN__icontains=criminal.INN)
+    print(similar)
     temp = []
     for sim in similar:
         if not sim == criminal:
@@ -251,11 +252,29 @@ def similar_criminal(request, criminal):
     similar = temp
     mans = []
     contacts_detail = None
+    address = None
+    relatives = None
+    contact_persons = None
+    conviction = None
+    manhunt = None
+    criminal_case = None
     for sim in similar:
+        address = CriminalAddresses.objects.filter(criminal_id=sim)
         contacts_detail = Contacts.objects.filter(criminal_id=sim)
+        relatives = CriminalsRelatives.objects.filter(criminal_id=sim)
+        contact_persons = CriminalsContactPersons.objects.filter(criminal_id=sim)
+        conviction = Conviction.objects.filter(criminal_id=sim)
+        manhunt = Manhunt.objects.filter(criminal_id=sim)
+        criminal_case = CriminalCaseCriminals.objects.filter(criminal_id=sim)
         temp = {
             'man': sim,
-            'contacts_detail': contacts_detail
+            'contacts_detail': contacts_detail,
+            'address': address,
+            'relatives': relatives,
+            'contact_persons': contact_persons,
+            'conviction': conviction,
+            'manhunt': manhunt,
+            'criminal_case': criminal_case,
         }
         mans.append(temp)
     return mans
@@ -330,11 +349,23 @@ def cc_detail(request, pk):
     return render(request, 'reestr/ccase/cc-detail.html', context=context)
 
 
+@login_required
+def cc_logs(request, pk):
+    cc = CriminalCase.objects.get(id=pk)
+    logs = object_logs(request, cc)
+    context = {
+        'cc': cc,
+        'logs': logs,
+        'wrapper_title': 'Уголовные дела'
+    }
+    return render(request, 'reestr/logs/criminal_logs.html', context=context)
+
+
 def cc_criminal_delete(request, pk):
     member = CriminalCaseCriminals.objects.get(id=pk)
     cc = member.criminal_case
     member.delete()
-    action_logging_delete(request, member)
+    action_logging_exclude(request, cc, member)
     return redirect(cc)
 
 
@@ -424,6 +455,19 @@ def manhunt_detail(request, pk):
     return render(request, 'reestr/ccase/manhunt-detail.html', context=context)
 
 
+@login_required
+def manhunt_logs(request, pk):
+    manhunt = Manhunt.objects.get(id=pk)
+    logs = object_logs(request, manhunt)
+    context = {
+        'cc': manhunt,
+        'logs': logs,
+        'wrapper_title': 'Уголовные дела'
+    }
+    return render(request, 'reestr/logs/criminal_logs.html', context=context)
+
+
+
 class CriminalCreateView(View):
     def get(self, request):
         form = CriminalCreateForm()
@@ -511,6 +555,16 @@ class CriminalContactDetailAddView(View):
             return redirect(criminal)
         return render(request, 'reestr/criminals/add/criminal_contact_add.html',
                       context={'form': bound_form, 'criminal': criminal})
+
+
+def contacts_detail_delete(request, pk):
+    contact = Contacts.objects.get(id=pk)
+    criminal = contact.criminal_id
+    action_logging_exclude(request, criminal, contact)
+    action_logging_delete(request, contact)
+    contact.delete()
+    return redirect(criminal)
+
 
 
 class CriminalAddAddressView(View):
