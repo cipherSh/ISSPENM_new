@@ -3,46 +3,38 @@
 {% block content %}
 
 
-<main role="main" class="container shadow py-1 mt-5 mb-5 border">
-    <div class="container text-center mt-5 mb-5"><h2 class="">Информационная система учета террористов и экстремистов
-        ОПКК МВД КР</h2></div>
-    <div class="align-items-center p-3 my-3 text-white-50 bg-purple rounded">
-        <div class="">
-            <form action="{% url 'homepage_url' %}" method="get">
-                <div class="row form-group">
-                    <div class="col-lg-10 m-0">
-                        <input type="text" class="form-control" name="text">
+<main role="main" class="container shadow py-1 mt-5 mb-5 pb-5 border bg-white" style="min-height:500px">
+    <div class="container text-center mt-5 mb-5">
+        <h2 class="">Информационная система учета террористов и экстремистов
+            ОПКК МВД КР
+        </h2>
+    </div>
+    <div class="align-items-center p-3 my-3 rounded">
+        <div class="row">
+            <div class="col-12">
+                <form action="{% url 'homepage_url' %}" method="get">
+                    <div class="row form-group">
+                        <div class="col-10 m-0">
+                            <input type="text" class="form-control" name="text">
+                        </div>
+                        <div class="col-2 m-0">
+                            <input type="submit" class="btn btn-block btn-primary" value="Поиск">
+                        </div>
                     </div>
-                    <div class="col-lg-2 m-0">
-                        <input type="submit" class="btn btn-block btn-primary" value="Поиск">
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col form-text text-muted small">
+                <p class="p-0 m-0">*Дата и время ввести в формате YYYY-MM-DD.</p>
+                <p class="p-0 m-0">Например: <span class="text-uppercase">2019-06-02</span></p>
+            </div>
         </div>
     </div>
 
 
     {% if not search_text %}
-    <div class="my-3 mb-5 p-3 bg-white rounded box-shadow">
-        <h6 class="border-bottom border-gray pb-2 mb-0">Suggestions</h6>
 
-        <div class="media text-muted pt-3">
-            <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="32x32"
-                 class="mr-2 rounded"
-                 src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16ae9d7106b%20text%20%7B%20fill%3A%23007bff%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A2pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16ae9d7106b%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23007bff%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2211.546875%22%20y%3D%2216.9%22%3E32x32%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
-                 data-holder-rendered="true" style="width: 32px; height: 32px;">
-            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <strong class="text-gray-dark">Full Name</strong>
-                    <a href="#">Follow</a>
-                </div>
-                <span class="d-block">@username</span>
-            </div>
-        </div>
-        <small class="d-block text-right mt-3">
-            <a href="#">All suggestions</a>
-        </small>
-    </div>
     {% endif %}
 </main>
 
@@ -60,7 +52,8 @@
         <div class="col-lg-5 rounded border m-0 shadow my-2 mx-4 ml-5 bg-white" style="min-height:200px">
             <h6 class="pb-2 mb-0">{{req.doc}}</h6>
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                <strong class="d-block text-gray-dark">{% if req.group_id %}Групповой доступ{% else %}Индивидуальный доступ{% endif %}</strong>
+                <strong class="d-block text-gray-dark">{% if req.group_id %}Групповой доступ{% else %}Индивидуальный
+                    доступ{% endif %}</strong>
             </p>
             {% if req.group_id %}
             <p class="pb-3 mb-0 small border-bottom border-gray">
@@ -78,7 +71,7 @@
             {% endif %}
             {% if req.reason_reject %}
             <p class="pb-3 mb-0 small">
-                 {{ req.reason_reject }}
+                {{ req.reason_reject }}
             </p>
             {% endif %}
         </div>
@@ -176,7 +169,13 @@
                 <div class="col-lg-4">{{ profile }}</div>
                 <div class="col-lg-2 text-right">{{ profile.user }}</div>
                 <div class="col-lg-2 text-right">{{ profile.role_id}}</div>
-                <div class="col-lg-2 text-right">{% if profile.user.is_active %}Активный{% else %}Не активный{% endif %}</div>
+                <div class="col-lg-2 text-right">
+                    {% if profile.user.is_active %}
+                    Активный
+                    {% else %}
+                    Не активный
+                    {% endif %}
+                </div>
                 <div class="col-lg-2 text-right"><a href="{{ profile.get_absolute_url }}">Профиль</a></div>
             </div>
 

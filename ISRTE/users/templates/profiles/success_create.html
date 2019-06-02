@@ -1,5 +1,20 @@
 {% extends "wrapper.html" %}
 
 {% block content_wrapper %}
-Профиль успешно создан
+<div class="row">
+    <div class="col">Пользователь успешно создан</div>
+</div>
+<div class="row">
+    <div class="col">{{ password }}</div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <a href="{{ profile.get_update_url }}">Далее</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <a href="{% url 'pdf_url' %}">PDF</a>
+    </div>
+</div>
 {% endblock %}

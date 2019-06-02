@@ -24,7 +24,7 @@
     {% if not user == request.user.profile %}
     <div class="row">
         <div class="col-md col-lg">
-            <a class="text-muted" href="{{ user.get_update_url }}">{{ user.user }}</a>
+            <a class="text-muted" href="{{ user.get_absolute_url }}">{{ user.user }}</a>
         </div>
         <div class="col-md col-lg">
             <a class="text-muted" href="#">{{ user.user.last_name }} {{ user.user.first_name }}</a></h2>

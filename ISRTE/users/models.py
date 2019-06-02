@@ -44,10 +44,13 @@ class Profile(models.Model):
         return self.user.last_name + ' ' + self.user.first_name
 
     def get_absolute_url(self):
-        return reverse('user_update_url', kwargs={'pk': self.user.id})
+        return reverse('user_profile_url', kwargs={'pk': self.user.id})
 
     def get_update_url(self):
-        return reverse('user_profile_url', kwargs={'pk': self.user.id})
+        return reverse('user_update_url', kwargs={'pk': self.user.id})
+
+    def get_delete_url(self):
+        return reverse('user_delete_url', kwargs={'pk': self.user.id})
 
     def get_logs_url(self):
         return reverse('profile_logs_url', kwargs={'pk': self.user.id})

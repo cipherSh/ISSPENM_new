@@ -6,11 +6,11 @@
     <div class="col">
         <div class="h4 mb-4">Пользовательские данные</div>
         <form action="{{ profile.get_absolute_url }}" method="post" class="p-5">
-        {% csrf_token %}
-        {% for field in user_form %}
+            {% csrf_token %}
+            {% for field in user_form %}
 
             {% if field.error %}
-                {{ field.error }}
+            {{ field.error }}
             {% endif %}
             <div class="form-group border-bottom pb-3">
                 <div class="row">
@@ -18,11 +18,11 @@
                     <div class="col-lg-8">{{field}}</div>
                 </div>
             </div>
-        {% endfor %}
-        {% for field in profile_form %}
+            {% endfor %}
+            {% for field in profile_form %}
 
             {% if field.error %}
-                {{ field.error }}
+            {{ field.error }}
             {% endif %}
             <div class="form-group border-bottom pb-3">
                 <div class="row">
@@ -30,9 +30,9 @@
                     <div class="col-lg-8">{{field}}</div>
                 </div>
             </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-    </form>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
     </div>
 </div>
 {% endblock %}

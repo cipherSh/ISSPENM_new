@@ -1,20 +1,51 @@
 {% extends "wrapper.html" %}
 {% block content_wrapper %}
 
-    <div class="row">
-        <div class="col">
-            <div class="row bg-secondary text-light rounded">
-                <div class="col">Дата и время</div>
-                <div class="col">ФИО</div>
-                <div class="col">Действие</div>
-            </div>
-            {% for log in audit %}
-            <div class="row border-bottom">
-                <div class="col">{{ log.data }}</div>
-                <div class="col">{{ log.user }}</div>
-                <div class="col">{{ log.act }}</div>
-            </div>
-            {% endfor %}
+<div class="row">
+    <div class="col">
+        <div class="row bg-secondary text-light rounded">
+            <div class="col">Дата и время</div>
+            <div class="col">ФИО</div>
+            <div class="col">Действие</div>
+        </div>
+        {% for log in audit.object_list %}
+        <div class="row border-bottom">
+            <div class="col">{{ log.data }}</div>
+            <div class="col">{{ log.user }}</div>
+            <div class="col">{{ log.act }}</div>
+        </div>
+        {% endfor %}
+
+        <div class="row mt-2 mx-4">
+            {% if is_paginated %}
+            <nav aria-label="...">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                        <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Пред</a>
+                    </li>
+
+                    {% for n in audit.paginator.page_range %}
+
+                    {% if audit.number == n %}
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="?page={{ n }}">{{ n }}
+                            <span class="sr-only">( current )</span>
+                        </a>
+                    </li>
+                    {% elif n > audit.number|add:-5 and n < audit.number|add:5 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                    </li>
+                    {% endif %}
+
+                    {% endfor %}
+                    <li class="page-item {% if not next_url %} disabled {% endif %}">
+                        <a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">След</a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
+</div>
 {% endblock content_wrapper %}

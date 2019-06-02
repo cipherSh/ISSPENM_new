@@ -61,12 +61,12 @@
                         <a href="{{ profile.get_user_logs_url }}" class="btn btn-info btn-block">Журнал действий</a>
                     </div>
                     <div class="col-1 mx-1">
-                        <a href="" class="btn btn-outline-primary btn-sm">
+                        <a href="{{ profile.get_update_url }}" class="btn btn-outline-primary btn-sm">
                             <img src="{% static 'access/icon_redacting.png' %}" alt="Редактировать">
                         </a>
                     </div>
                     <div class="col-1 mx-1">
-                        <a href="" class="btn btn-outline-danger btn-sm">
+                        <a href="{{ profile.get_delete_url }}" class="btn btn-outline-danger btn-sm">
                             <img src="{% static 'access/icon_delete_32.png'%}" alt="Удалить">
                         </a>
                     </div>

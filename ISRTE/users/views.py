@@ -7,7 +7,9 @@ from django.contrib.auth.models import Group, User
 from datetime import datetime
 from django.utils.timezone import get_current_timezone
 from django.views.generic import View
-from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
+from io import BytesIO
+from reportlab.pdfgen import canvas
 import pytz
 
 #models
@@ -16,7 +18,7 @@ from reestr.models import Criminals
 from django.contrib.contenttypes.models import ContentType
 
 # forms
-from .forms import UserUpdateForm, ProfileUpdateForm
+from .forms import UserUpdateForm, ProfileUpdateForm, UserLogsSearchForm
 
 
 # Create your views here.
@@ -59,7 +61,7 @@ def user_create(request):
     }
     if request.POST:
         username = request.POST['username']
-        password = request.POST['password']
+        password = User.objects.make_random_password(15)
         if User.objects.filter(username=username).count():
             message = "Пользователь c именем {} уже зарегистрирован".format(username)
             context = {
@@ -71,10 +73,39 @@ def user_create(request):
             user = User.objects.create_user(username=username, password=password)
             profile = Profile.objects.get(user=user)
             action_logging_create(request, user)
-            return redirect(profile)
+            context = {
+                'wrapper_title': "Создание пользователя",
+                'profile': profile,
+                'password': password
+            }
+            return render(request, 'profiles/success_create.html', context=context)
 
     return render(request, 'profiles/user_create.html', context=context)
 
+
+def some_view(request):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+    buffer = BytesIO()
+
+    # Create the PDF object, using the BytesIO object as its "file."
+    p = canvas.Canvas(buffer)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    p.drawString(10, 10, "Hello world.")
+
+    # Close the PDF object cleanly.
+    p.showPage()
+    p.save()
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
 
 class UserUpdateView(View):
     def get(self, request, pk):
@@ -116,7 +147,7 @@ class UserUpdateView(View):
                 'profile': up_profile
             }
             action_logging_update(request, profile)
-            return render(request, 'profiles/success_create.html', context=context)
+            return redirect(profile)
         return render(request, 'profiles/profile_update.html', context=context)
 
 
@@ -158,25 +189,81 @@ def user_profile(request, pk):
         return render(request, 'profiles/user_profile.html', context=context)
     return HttpResponseNotFound('')
 
+@login_required
+def user_delete(request, pk):
+    profile = Profile.objects.get(id=pk)
+    profile.user.delete()
+    return redirect(reverse('users_list_url'))
 
 @login_required
 def users_audit(request):
     audit = Audit.objects.all().order_by('-data')
+
+    paginator = Paginator(audit, 20)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+
+    is_paginated = page.has_other_pages()
+
+    if page.has_previous():
+        prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
     context = {
-        'audit': audit,
+        'audit': page,
+        'is_paginated': is_paginated,
+        'next_url': next_url,
+        'prev_url': prev_url,
         'wrapper_title': "Журнал авторизации"
     }
     return render(request, 'profiles/audit.html', context=context)
 
-
+# журнал действий
 @login_required
 def users_logs(request):
-    logs = UserLogs.objects.all().order_by('-action_time')
+    search_form = UserLogsSearchForm()
+    logs = ''
+    if request.POST:
+        bound_form = UserLogsSearchForm(request.POST)
+        if bound_form.is_valid():
+            search = bound_form.save(commit=False)
+            search_query = search.user
+            logs = UserLogs.objects.filter(user=search_query).order_by('-action_time')
+    else:
+        logs = UserLogs.objects.all().order_by('-action_time')
+
+    paginator = Paginator(logs, 50)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+
+    is_paginated = page.has_other_pages()
+
+    if page.has_previous():
+        prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
     context = {
-        'logs': logs,
+        'logs': page,
+        'search_form':search_form,
+        'is_paginated': is_paginated,
+        'next_url': next_url,
+        'prev_url': prev_url,
         'wrapper_title': "Журнал действий"
     }
     return render(request, 'profiles/logs.html', context=context)
+
 
 
 @login_required

@@ -1,41 +1,96 @@
 {% extends "wrapper.html" %}
 {% block content_wrapper %}
 
-    <div class="row">
-        <div class="col">
-            <div class="row bg-secondary text-light rounded font-weight-bold">
-                <div class="col-2">Дата и время</div>
-                <div class="col-2">Пользователь</div>
-                <div class="col-2">Контент</div>
-                <div class="col-3">Объект</div>
-                <div class="col-3">Действие</div>
-            </div>
-            {% for log in logs %}
-            <div class="row border-bottom">
-                <div class="col-2" style="background-color: Seashell">{{ log.action_time }}</div>
-                <div class="col-2" style="background-color: Snow">{{ log.user }}</div>
-                <div class="col-2" >{{ log.content_type }}</div>
-                <div class="col-3" >{{ log.object_repr }}</div>
-                <div class="col-3" >
-                    {% if log.action_flag == 1 %}
-                        Создан
-                    {% elif log.action_flag == 2 %}
-                        Просмотр
-                    {% elif log.action_flag == 3 %}
-                        Обновлен
-                    {% elif log.action_flag == 4 %}
-                        Удален
-                    {% elif log.action_flag == 5 %}
-                        Добавлен
-                    <p>{{ log.message.added }}</p>
-                    {% elif log.action_flag == 6 %}
-                        Исклчен {{ log.message.exclude }}
-                    {% elif log.action_flag == 7 %}
-                        {{ log.message.message }}
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col">
+                <form action="{% url 'users_logs_url' %}" method="post">
+                    {% csrf_token %}
+                    {% for field in search_form %}
+
+                    {% if field.error %}
+                    {{ field.error }}
                     {% endif %}
-                </div>
+                    <div class="form-group pb-3">
+                        <div class="row">
+                            <div class="col-lg-2 font-weight-bold form-text">{{field.label}}</div>
+                            <div class="col-lg-9">{{field}}</div>
+                            <button type="submit" class="btn btn-primary">Поиск</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </form>
             </div>
-            {% endfor %}
         </div>
+        {% if not logs %}
+        <div class="row form-text font-weight-bold">По вашему запросу нету совпадении</div>
+        {% else %}
+        <div class="row bg-secondary text-light rounded font-weight-bold">
+            <div class="col-2">Дата и время</div>
+            <div class="col-2">Пользователь</div>
+            <div class="col-2">Контент</div>
+            <div class="col-3">Объект</div>
+            <div class="col-3">Действие</div>
+        </div>
+        {% for log in logs.object_list %}
+        <div class="row border-bottom">
+            <div class="col-2" style="background-color: Seashell">{{ log.action_time }}</div>
+            <div class="col-2" style="background-color: Snow">{{ log.user }}</div>
+            <div class="col-2">{{ log.content_type }}</div>
+            <div class="col-3">{{ log.object_repr }}</div>
+            <div class="col-3">
+                {% if log.action_flag == 1 %}
+                Создан
+                {% elif log.action_flag == 2 %}
+                Просмотр
+                {% elif log.action_flag == 3 %}
+                Обновлен
+                {% elif log.action_flag == 4 %}
+                Удален
+                {% elif log.action_flag == 5 %}
+                Добавлен
+                <p>{{ log.message.added }}</p>
+                {% elif log.action_flag == 6 %}
+                Исклчен {{ log.message.exclude }}
+                {% elif log.action_flag == 7 %}
+                {{ log.message.message }}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% endif %}
     </div>
+    <div class="row mt-2 mx-4">
+        {% if is_paginated %}
+        <nav aria-label="...">
+            <ul class="pagination justify-content-end">
+                <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                    <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Пред</a>
+                </li>
+
+                {% for n in logs.paginator.page_range %}
+
+                {% if logs.number == n %}
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="?page={{ n }}">{{ n }}
+                        <span class="sr-only">( current )</span>
+                    </a>
+                </li>
+                {% elif n > logs.number|add:-5 and n < logs.number|add:5 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                </li>
+                {% endif %}
+
+                {% endfor %}
+                <li class="page-item {% if not next_url %} disabled {% endif %}">
+                    <a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">След</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
 {% endblock content_wrapper %}

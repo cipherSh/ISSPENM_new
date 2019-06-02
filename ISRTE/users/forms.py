@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Profile
+from .models import Profile, UserLogs
 from django.contrib.auth.models import User
 
 
@@ -26,4 +26,14 @@ class ProfileUpdateForm(forms.ModelForm):
         widgets = {
             'role_id': forms.Select(attrs={'class': 'form-control'}),
             'trust_level_id': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class UserLogsSearchForm(forms.ModelForm):
+    class Meta:
+        model = UserLogs
+        fields = ['user']
+
+        widgets = {
+            'user': forms.Select(attrs={'class': 'form-control'}),
         }

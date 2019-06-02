@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 # forms
 from .forms import CriminalCreateForm, CriminalContactDetailAddForm, CriminalAddContactPersonForm, \
@@ -181,8 +182,29 @@ def criminals_list(request):
                                                  Q(INN__icontains=word))
     else:
         criminals = Criminals.objects.all()
+    paginator = Paginator(criminals, 4)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+
+    is_paginated = page.has_other_pages()
+
+    if page.has_previous():
+        prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
+
+
     context = {
-        'criminals': criminals,
+        'criminals': page,
+        'is_paginated': is_paginated,
+        'next_url': next_url,
+        'prev_url': prev_url,
         'nav_btn_add': nav_btn_add,
         'wrapper_title': wrapper_title,
         'search_url': search_url
