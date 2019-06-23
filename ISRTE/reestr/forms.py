@@ -1,6 +1,6 @@
 from django import forms
 from .models import Criminals, Persons, CriminalsRelatives, CriminalsContactPersons, CriminalAddresses, Contacts, \
-    Conviction, CriminalCase, CriminalCaseCriminals, Manhunt
+    Conviction, CriminalCase, CriminalCaseCriminals, Manhunt, Review
 
 
 class CriminalCreateForm(forms.ModelForm):
@@ -109,6 +109,7 @@ class CriminalCaseUpdateForm(forms.ModelForm):
             'remarks': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
+
 class CriminalManhuntAddForm(forms.ModelForm):
     class Meta:
         model = Manhunt
@@ -130,3 +131,9 @@ class CriminalConvictionAddForm(forms.ModelForm):
         model = Conviction
         fields = ['criminal_case_number', 'criminal_case_year', 'criminal_case_organ', 'law_article', 'date_sentence',
                   'date_release']
+
+
+class ToReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['reason']

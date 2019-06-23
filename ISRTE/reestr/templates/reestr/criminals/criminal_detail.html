@@ -14,19 +14,17 @@
 
                     {% if criminal.check %}
                     <div class="col-lg-6 text-success m-0 p-0"><h6>Подтвержден</h6></div>
-                    {% else %}
-                    <div class="col-lg-8 text-warning m-0 p-0"><h6>Не подтвержден</h6></div>
+                    {% elif criminal.to_rev %}
+                    <div class="col-lg-8 text-warning m-0 p-0"><h6>На пересмотре</h6></div>
+                    {% elif criminal.consideration %}
+                    <div class="col-lg-8 text-primary m-0 p-0"><h6>На рассмотрении</h6></div>
+                    {% elif not criminal.consideration and not criminal.check and not criminal.to_rev %}
+                    <div class="col-lg-8 text-warning m-0 p-0"><h6>В обработке</h6></div>
                     {% endif %}
                 </div>
             </div>
             <div class="col-lg-8 text-center"><h3>{{ criminal }}</h3></div>
-            <div class="col-lg-2 p-0">
-                {% if not criminal.check %}
-                {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head' %}
-                <a href="{{ criminal.get_criminal_check_url }}" class="btn btn-success btn-block">Подтвердить</a>
-                {% endif %}
-                {% endif %}
-            </div>
+
         </div>
     </div>
     <!-- навбар -->
@@ -46,15 +44,56 @@
             {% include 'reestr/includes/include_criminal_detail_nav_btn.html' %}
 
             <br>
-        </div>
 
+        </div>
         {% endif %}
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="btn-group dropright" role="group">
+                <button type="button" class="btn btn-secondary btn-block dropdown-toggle dropdown-toggle-split"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Допольнительные информации
+                    <span class="sr-only">Toggle Dropleft</span>
+                </button>
+                <div class="dropdown-menu">
+                    <!-- Dropdown menu links -->
+                    <a class="dropdown-item" href="" id="addressListBtn">Адрессные данные</a>
+                    <a class="dropdown-item" href="" id="relativesListBtn">Родственники</a>
+                    <a class="dropdown-item" href="" id="conPersonListBtn">Контактируемые лица</a>
+                    <a class="dropdown-item" href="" id="contactsListBtn">Контактные данные</a>
+                    <a class="dropdown-item" href="" id="ccListBtn">Уголовные дела</a>
+                    <a class="dropdown-item" href="" id="manhuntListBtn">Розыскные дела</a>
+                    <a class="dropdown-item" href="" id="convictionListBtn">Судимость</a>
+                </div>
+            </div>
+        </nav>
     </div>
     <!-- досье -->
     {% include "reestr/criminals/includes/include_criminal_dosye.html"%}
     <!-- информация -->
     <div class="col-lg-2 pt-2 border-left">
         {% if request.user.is_superuser %}
+        <div class="col-12 p-0 mb-2">
+            {% if not criminal.check %}
+            {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'head' %}
+            <a href="{{ criminal.get_criminal_check_url }}" class="btn btn-success btn-block">Подтвердить</a>
+            {% endif %}
+            {% endif %}
+            {% if criminal.check and criminal.consideration or not criminal.to_rev %}
+            {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'Руководитель отдела' %}
+            <a href="{{ criminal.get_review_url }}" class="btn btn-success btn-block">На пересмотр</a>
+            {% endif %}
+            {% endif %}
+            {% if not criminal.to_rev and not criminal.consideration and not criminal.check%}
+            {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'Руководитель отдела' %}
+            <a href="{{ criminal.get_consideration_url }}" class="btn btn-primary btn-block">На рассмотрение</a>
+            {% endif %}
+            {% endif %}
+            {% if criminal.to_rev %}
+            {% if request.user.is_superuser or request.user.profile.role_id.role_type == 'Руководитель отдела' %}
+            <a href="{{ criminal.get_cons_review_url }}" class="btn btn-info btn-block">На рассмотрение</a>
+            {% endif %}
+            {% endif %}
+        </div>
         <a href="{{ criminal.get_logs_url }}" class="btn btn-outline-dark btn-block btn-sm mb-2">
             История
         </a>
@@ -106,7 +145,7 @@
             </a>
             {% else %}
             <a href="{{ criminal.get_criminal_close_change_url }}" class="btn btn-outline-success btn-sm btn-block">
-                <img src="{% static 'access/icon_open_32.png'%}" alt="Закрыть доступ">
+                <img src="{% static 'access/icon_open_32.png'%}" alt="Открыть доступ">
             </a>
             {% endif %}
             <a href="{{ criminal.get_group_access_create_url }}" class="btn btn-outline-primary btn-sm btn-block">
@@ -116,7 +155,58 @@
                 <img src="{% static 'access/icon_add_user.png'%}" alt="Открыть персональный доступ">
             </a>
             {% endif %}
+            {% if perm.access or criminal.owner == request.user.profile or request.user.is_superuser %}
+            <a href="#" id="accessListBtn" class="text-muted btn border btn-block">Список доступа</a>
+            {% endif %}
         </div>
+    </div>
+</div>
+
+<div class="row rounded border mb-5 d-none" id="accessList">
+    <div class="col-lg-12 round">
+        <div class="row d-flex bg-secondary justify-content-center text-align-center">
+            <div class="text-light"><h4>Список доступа</h4></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="row border-bottom">
+                    <div class="text-dark px-3"><h6>Групповой доступ</h6></div>
+                </div>
+                <div class="row border-bottom">
+                    <div class="col">Группа</div>
+                    <div class="col">Действие</div>
+                </div>
+                {% for access in group_access %}
+                <div class="row border-bottom">
+                    <div class="col">{{access.group_id}}</div>
+                    <div class="col"><a href="{{access.get_delete_url}}" class="text-muted">Удалить</a></div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col">
+                <div class="row border-bottom">
+                    <div class="text-dark px-3"><h6>Индивидуальный доступ</h6></div>
+                </div>
+                <div class="row border-bottom">
+                    <div class="col">Пользователь</div>
+                    <div class="col">Действие</div>
+                </div>
+                {% for access in person_access %}
+                <div class="row border-bottom">
+                    <div class="col">{{access.user_id}}</div>
+                    <div class="col"><a href="{{access.get_delete_url}}" class="text-muted">Удалить</a></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% for a in address %}
+        <div class="row border-bottom rounded">
+            <div class="col-lg-2">
+            </div>
+            <div class="col-lg-6">
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
@@ -148,5 +238,70 @@
 {% if manhunt %}
 {% include "reestr/criminals/includes/include_criminal_manhunt.html"%}
 {% endif %}
+
+<script>
+    $('#accessListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#accessList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#addressListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#addressList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#relativesListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#relativesList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#conPersonListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#conPersonList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#contactsListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#contactsList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#ccListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#ccList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#manhuntListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#manhuntList').toggleClass('d-none');
+        })
+
+
+</script>
+<script>
+    $('#convictionListBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#convictionList').toggleClass('d-none');
+        })
+
+
+</script>
 
 {% endblock content_wrapper %}

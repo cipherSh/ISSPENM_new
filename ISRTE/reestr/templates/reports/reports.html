@@ -1,0 +1,24 @@
+{% extends "wrapper.html" %}
+{% block content_wrapper %}
+<div class="row border p-3 shadow" style="min-height:570px">
+    <div class="col-2 border-right">
+        <div class="row">
+            <a href="{% url 'report_all_url' %}" class="btn btn-primary btn-block my-2">Отчет выполненных работ</a>
+        </div>
+        <div class="row">
+            <a href="{% url 'report_dossier_url' %}" class="btn btn-primary btn-block my-2">Отчет по досье</a>
+        </div>
+        <div class="row">
+            <a href="{% url 'report_cc_url' %}" class="btn btn-primary btn-block my-2">Отчет по УД</a>
+        </div>
+        <div class="row">
+            <a href="{% url 'report_manhunt_url' %}" class="btn btn-primary btn-block my-2">Отчет по РД</a>
+        </div>
+    </div>
+    <div class="col-10">
+        {% block content_reports %}
+
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

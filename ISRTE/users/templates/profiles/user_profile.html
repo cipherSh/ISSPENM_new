@@ -13,6 +13,10 @@
                 </div>
                 <div class="row mb-1">
                     <div class="col font-weight-bold">Зарегистрирован</div>
+                    <div class="col">{{ profile.user.username }}</div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col font-weight-bold">Зарегистрирован</div>
                     <div class="col">{{ profile.user.date_joined }}</div>
                 </div>
                 <div class="row mb-1">
@@ -35,7 +39,7 @@
                         Пользователь неактивен
                         {% endif %}
                     </div>
-                    {% if request.user.is_superuser %}
+                    {% if request.user.is_superuser and not request.user.profile == profile%}
                     <div class="col">
                         {% if profile.user.is_active %}
                         <a href="{% url 'user_active_url' pk=profile.id %}" class="btn btn-warning btn-block">Закрыть
@@ -52,14 +56,9 @@
 
             </div>
             <div class="col-lg-6">
-                <div class="row p-0">
-                    <div class="col-2"></div>
-                    <div class="col-3">
-                        <a href="{{ profile.get_logs_url }}" class="btn btn-secondary btn-block">История</a>
-                    </div>
-                    <div class="col-4">
-                        <a href="{{ profile.get_user_logs_url }}" class="btn btn-info btn-block">Журнал действий</a>
-                    </div>
+                {% if request.user.is_superuser %}
+                <div class="row p-0 mb-1">
+                    <div class="col-9"></div>
                     <div class="col-1 mx-1">
                         <a href="{{ profile.get_update_url }}" class="btn btn-outline-primary btn-sm">
                             <img src="{% static 'access/icon_redacting.png' %}" alt="Редактировать">
@@ -70,6 +69,32 @@
                             <img src="{% static 'access/icon_delete_32.png'%}" alt="Удалить">
                         </a>
                     </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row p-0 mb-1">
+                    <div class="col-4 m-0"></div>
+                    <div class="col-4 m-0">
+                        <a href="{{ profile.get_logs_url }}" class="btn btn-secondary btn-block">История</a>
+                    </div>
+                    <div class="col-4 m-0">
+                        <a href="{{ profile.get_user_logs_url }}" class="btn btn-info btn-block">Журнал действий</a>
+                    </div>
+
+                </div>
+                {% endif %}
+                <div class="row p-0 mb-1">
+                    <div class="col-4"></div>
+                    {% if request.user.is_superuser and not request.user.profile == profile %}
+                    <div class="col-4">
+                        <a href="{{ profile.get_logs_url }}" class="btn btn-secondary btn-block">Сброс пароля</a>
+                    </div>
+                    {% else %}
+                    <div class="col-4"></div>
+                    {% endif %}
+                    <div class="col-4">
+                        <a href="{% url 'user_password_edit' %}" class="btn btn-secondary btn-block">Сменить пароль</a>
+                    </div>
+
                 </div>
                 <div class="row">
                     <div class="col-12 font-weight-bold mb-1">

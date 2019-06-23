@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col">
         <div class="h4 mb-4">Пользовательские данные</div>
-        <form action="{{ profile.get_absolute_url }}" method="post" class="p-5">
+        <form action="{{ profile.get_update_url }}" method="post" class="p-5">
             {% csrf_token %}
             {% for field in user_form %}
 

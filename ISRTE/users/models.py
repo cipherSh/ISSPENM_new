@@ -5,6 +5,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
 from django.contrib.auth.models import ContentType, Group
+from datetime import datetime
+from django.utils.timezone import get_current_timezone, timezone
 
 #from reestr.models import Criminals
 
@@ -35,6 +37,8 @@ class Profile(models.Model):
     trust_level_id = models.ForeignKey(TrustLevel, verbose_name='Уровень доверия', on_delete=models.SET_NULL, null=True,
                                        blank=True)
     birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
+    initial_pass = models.BooleanField(verbose_name='Начальный пароль', default=False)
+    pass_change_date = models.DateTimeField(verbose_name='Время изменения пароля', null=True)
 
     class Meta:
         verbose_name = "Профиль"
@@ -44,19 +48,22 @@ class Profile(models.Model):
         return self.user.last_name + ' ' + self.user.first_name
 
     def get_absolute_url(self):
-        return reverse('user_profile_url', kwargs={'pk': self.user.id})
+        return reverse('user_profile_url', kwargs={'pk': self.id})
 
     def get_update_url(self):
-        return reverse('user_update_url', kwargs={'pk': self.user.id})
+        return reverse('user_update_url', kwargs={'pk': self.id})
 
     def get_delete_url(self):
-        return reverse('user_delete_url', kwargs={'pk': self.user.id})
+        return reverse('user_delete_url', kwargs={'pk': self.id})
 
     def get_logs_url(self):
-        return reverse('profile_logs_url', kwargs={'pk': self.user.id})
+        return reverse('profile_logs_url', kwargs={'pk': self.id})
 
     def get_user_logs_url(self):
-        return reverse('user_acts_url', kwargs={'pk': self.user.id})
+        return reverse('user_acts_url', kwargs={'pk': self.id})
+
+    def get_user_password_edit(self):
+        return reverse('user_password_edit', kwargs={'pk': self.id})
 
 
 @receiver(post_save, sender=User)

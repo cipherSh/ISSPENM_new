@@ -21,6 +21,9 @@
             <nav aria-label="...">
                 <ul class="pagination justify-content-end">
                     <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                        <a class="page-link" href="?page={{ first_url }}" tabindex="-1" aria-disabled="true">{{ first_url }}first</a>
+                    </li>
+                    <li class="page-item {% if not prev_url %} disabled {% endif %}">
                         <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Пред</a>
                     </li>
 
@@ -41,6 +44,10 @@
                     {% endfor %}
                     <li class="page-item {% if not next_url %} disabled {% endif %}">
                         <a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">След</a>
+                    </li>
+                    <li class="page-item {% if not next_url %} disabled {% endif %}">
+                        <a class="page-link" href="" tabindex="-1" aria-disabled="true">
+                            last</a>
                     </li>
                 </ul>
             </nav>

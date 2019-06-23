@@ -1,0 +1,11 @@
+{% extends "new_base.html" %}
+{% block title %} Информационная система учета террористов и экстремистов ОПКК МВД КР {% endblock %}
+{% block content %}
+<div class="row d-flex justify-content-end align-items-center">
+        <div class="col-7 m-0">
+            <a href="{{ request.user.profile.get_absolute_url }}" class="text-light active">Мой профиль</a>
+        </div>
+        <div class="col-5 m-0   ">
+            <a class="btn bt-sm btn-outline-light btn-block" href="{% url 'logout_url' %}">Выйти</a>
+        </div>
+{% endblock content%}

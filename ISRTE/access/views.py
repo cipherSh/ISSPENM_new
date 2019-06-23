@@ -23,13 +23,13 @@ from users.views import action_logging_view, action_logging_update, action_loggi
 
 # Create your views here.
 
-
+# Функция определение владельца
 def determinate_owner_or_superuser(request, criminal):
     if request.user.is_superuser or criminal.owner == request.user.profile:
         return True
     return False
 
-
+# функция определение доступа
 def determinate_have_access(request, criminal):
     user_group = request.user.groups.all()
     ans = False
@@ -55,7 +55,7 @@ def determinate_have_access(request, criminal):
     else:
         return False
 
-
+# Присваивание к пользователю все права над досье
 def assign_full_access(request):
     view_criminals = Permission.objects.get(codename="view_criminals")
     change_criminals = Permission.objects.get(codename="change_criminals")
@@ -64,7 +64,7 @@ def assign_full_access(request):
     request.user.user_permissions.add(change_criminals, execute_criminals, view_criminals, add_detail)
     return request
 
-
+# вычисление права доступа
 def access_determinate(request, criminal):
     view_criminals = Permission.objects.get(codename="view_criminals")
     change_criminals = Permission.objects.get(codename="change_criminals")
@@ -79,7 +79,7 @@ def access_determinate(request, criminal):
                     request.user.user_permissions.add(change_criminals)
     return request
 
-
+# список доступов
 def access_list(request):
     group_access = GroupAccess.objects.all()
     person_access = PersonAccess.objects.all()
@@ -90,11 +90,12 @@ def access_list(request):
         'person_access': person_access,
         'docs_requests': docs_requests,
         'docs_requests_group': docs_requests_group,
+        'wrapper_title': 'Управление доступом',
         'search_url': 'control_access_url'
     }
     return render(request, 'access/access_list.html', context=context)
 
-
+# Обновление права достпа группы
 class GroupAccessUpdate(View):
     def get(self, request, pk):
         doc = GroupAccess.objects.get(id=pk)
@@ -111,7 +112,7 @@ class GroupAccessUpdate(View):
             return redirect('/access/')
         return render(request, 'access/group_access_create.html', context={'form': bound_form, 'doc': doc})
 
-
+# Обновление права доступа пользователя
 class PersonalAccessUpdate(View):
     def get(self, request, pk):
         doc = PersonAccess.objects.get(id=pk)
@@ -128,21 +129,21 @@ class PersonalAccessUpdate(View):
             return redirect('/access/')
         return render(request, 'access/personal_access_create.html', context={'form': bound_form, 'doc': doc})
 
-
+# удаление группового доступа
 def group_access_delete(request, pk):
     access = GroupAccess.objects.get(id=pk)
     action_logging_delete(request, access)
     access.delete()
     return redirect('/access/')
 
-
+# удаление персонального доступа
 def personal_access_delete(request, pk):
     access = PersonAccess.objects.get(id=pk)
     action_logging_delete(request, access)
     access.delete()
     return redirect('/access/')
 
-
+# запрсо на доступ
 class RequestToOpenPersonalAccess(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -175,7 +176,7 @@ class RequestToOpenPersonalAccess(View):
         }
         return render(request, 'reestr/criminals/request_to_open_pa.html', context=context)
 
-
+# Запрос на групповой доступ
 class RequestToOpenGroupAccess(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -208,7 +209,7 @@ class RequestToOpenGroupAccess(View):
         }
         return render(request, 'reestr/criminals/request_to_open_group.html', context=context)
 
-
+# Создание группового доступа к досье
 class GroupAccessCreate(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -230,7 +231,7 @@ class GroupAccessCreate(View):
             return redirect(criminal)
         return render(request, 'access/group_access_create.html', context={'form': bound_form, 'criminal': criminal})
 
-
+# Создание персонального доступа к досье
 class PersonalAccessCreate(View):
     def get(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -252,7 +253,7 @@ class PersonalAccessCreate(View):
             return redirect(criminal)
         return render(request, 'access/personal_access_create.html', context={'form': bound_form, 'criminal': criminal})
 
-
+# Одобрение доступа
 class RequestToOpenAccept(View):
     def get(self, request, pk):
         request_to_open = RequestToOpen.objects.get(id=pk)
@@ -288,7 +289,7 @@ class RequestToOpenAccept(View):
             return redirect('/')
         return render(request, 'access/personal_access_create.html', context=context)
 
-
+# Одобрение группового доступа
 class RequestToOpenGroupAccept(View):
     def get(self, request, pk):
         request_to_open = RequestToOpen.objects.get(id=pk)

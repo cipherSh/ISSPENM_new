@@ -133,6 +133,8 @@ class Criminals(models.Model):
     confident = models.ForeignKey(TrustLevel, on_delete=models.PROTECT, null=True, blank=False,
                                   verbose_name="Уровень секретности")
     check = models.BooleanField(verbose_name='Подтверждение', default=False)
+    consideration = models.BooleanField(verbose_name='На рассмотрение', default=False)
+    to_rev = models.BooleanField(verbose_name='Пересмотр', default=False)
 
     class Meta:
         verbose_name = 'Досье'
@@ -198,6 +200,15 @@ class Criminals(models.Model):
 
     def get_logs_url(self):
         return reverse('criminal_logs_url', kwargs={'pk': self.id})
+
+    def get_review_url(self):
+        return reverse('to_review_url', kwargs={'pk': self.id})
+
+    def get_consideration_url(self):
+        return reverse('to_consideration_url', kwargs={'pk': self.id})
+
+    def get_cons_review_url(self):
+        return reverse('to_consideration_review_url', kwargs={'pk': self.id})
 
 
 class Persons(models.Model):
@@ -508,3 +519,16 @@ class Confluence(models.Model):
 
     def __str__(self):
         return self.criminal_id + '--' + self.pres + '--' + self.date
+
+
+class Review(models.Model):
+    dosye = models.ForeignKey(Criminals, verbose_name='Досье', on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, verbose_name='Проверил', on_delete=models.CASCADE)
+    reason = models.TextField(max_length=1000)
+    reviewed = models.BooleanField(verbose_name='Пересмотрено')
+
+    def __str__(self):
+        return str(self.dosye)
+
+    def get_absolute_url(self):
+        return reverse('review_url', kwargs={'pk': self.id})

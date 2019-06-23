@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEW BASE CHECK</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/custom/style.css'%}" type="text/css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+</head>
+<body>
+<div class="container-fluid pt-4 p-0">
+<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li class="nav-item">
+                            <a class="" href="{% url 'registry_url' %}">Реестр</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="" href="{% url 'cc_list_url' %}">Уголовные дела</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
+                        </li>
+                    </ul>
+    <header class="fixed-top font-weight-normal shadow-sm">
+        <div class="row">
+            <div class="col-9 p-0">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="navbar-brand" href="#" id="dd">Меню</a>
+
+                </nav>
+            </div>
+            <div class="col-3 d-flex justify-content-end align-items-center pr-5">
+                <div class="row d-flex justify-content-end align-items-center">
+                    <div class="col-7 m-0">
+                        <a href="{{ request.user.profile.get_absolute_url }}" class="text-light active">Мой профиль</a>
+                    </div>
+                    <div class="col-5 m-0   ">
+                        <a class="btn bt-sm btn-outline-light btn-block" href="{% url 'logout_url' %}">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <div class="menu">
+            <ul class="clear">
+                <li>
+                    <a href="index.html" title="Home">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <span class="link-text">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html" title="Features">
+                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        <span class="link-text">Features</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html" title="Portfolio">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        <span class="link-text">Portfolio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html" title="Blog">
+                        <i class="fa fa-comments-o" aria-hidden="true"></i>
+                        <span class="link-text">Blog</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html" title="Contact">
+                        <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                        <span class="link-text">Contact</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="row container-fluid border my-5">
+        <div class="col-2 d-none border">меню</div>
+        <div class="col">контент</div>
+    </div>
+    <div class="container-fluid px-5 " style="min-height:700px">
+        {% block content %}
+
+        {% endblock content %}
+    </div>
+</div>
+<script src="{% static 'js/custom/script.js' %}"></script>
+<script>
+    $('#dd').on('click', function(e) {
+        e.preventDefault();
+        $('.d-none').toggleClass('d-flex');
+        })
+
+
+</script>
+</body>
+</html>

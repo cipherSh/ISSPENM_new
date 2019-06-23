@@ -1,50 +1,111 @@
+{%load static%}
 <div class="col-9 p-0">
     <nav class="navbar navbar-expand-lg navbar-dark">
         <a class="navbar-brand" href="#">ОПКК МВД КР</a>
-        <div class="border-left">
+        <div class="border-left" id="mainNavBar">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link text-light" href="{% url 'homepage_url' %}">Главная<span
                             class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registry_url' %}">Реестр</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cc_list_url' %}">Уголовные дела</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
-                </li>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle text-light" type="button" id="dropdownMenu1"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Реестр
+                        <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'criminals_list_url' %}">Досье</a>
+                        {% if perms.reestr.add_criminals %}
+                        <a href="{% url 'criminal_create_url' %}" class="dropdown-item ">Добавить досье</a>
+                        <a class="dropdown-item" href="{% url 'qq_list_url' %}">Запросы</a>
+                        <a class="dropdown-item" href="{% url 'uncheck_docs_url' %}">Подтверждение</a>
+                        {% endif %}
+                        <hr>
+                        <a class="dropdown-item" href="{% url 'cc_list_url' %}">Уголовные дела</a>
+                        <a class="dropdown-item" href="{% url 'cc_create_url' %}">Добавить УД</a>
+                        <hr>
+                        <a class="dropdown-item" href="{% url 'manhunt_list_url' %}">Розыскные дела</a>
+                    </div>
+                </div>
+
                 {% if perms.auth.add_user %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'users_list_url' %}">Пользователи</a>
-                </li>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle text-light" type="button" id="dropdownMenu2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Пользователи
+                        <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'users_list_url' %}">Список</a>
+                        <a class="dropdown-item" href="{% url 'user_create_url' %}">Добавить</a>
+                        <a class="dropdown-item" href="{% url 'users_logs_url' %}">Журнал действий</a>
+                        <a class="dropdown-item" href="{% url 'users_audit_url' %}">Журнал авторизации</a>
+                        <a class="dropdown-item" href="#">Отчет</a>
+                    </div>
+                </div>
                 {% endif %}
                 {% if perms.auth.view_group %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'group_list_url' %}">Группы</a>
-                </li>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle text-light" type="button" id="dropdownMenu2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Группы
+                        <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'group_list_url' %}">Список</a>
+                        <a class="dropdown-item" href="{% url 'user_create_url' %}">Добавить</a>
+                        <a class="dropdown-item" href="#">Отчет</a>
+                    </div>
+                </div>
                 {% endif %}
-                {% if perms.access %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'control_access_url' %}">Управление доступом</a>
-                </li>
-                {% endif %}
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle text-light" type="button" id="dropdownMenu2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Отчет
+                        <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'report_all_url' %}">Отчет выполненных работ</a>
+                        <a class="dropdown-item" href="{% url 'report_dossier_url'%}">Отчет по досье</a>
+                        <a class="dropdown-item" href="{% url 'report_cc_url' %}">Отчет по уголовным делам</a>
+                        <a class="dropdown-item" href="{% url 'report_manhunt_url' %}">Отчет по розыскным дела</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle text-light" type="button" id="dropdownMenu2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Еще
+                        <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% if perms.access %}
+                        <a class="dropdown-item" href="{% url 'control_access_url' %}">Управление доступом</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="{% url 'statistics_url' %}">Статистика</a>
+                    </div>
+                </div>
             </ul>
-
         </div>
-
     </nav>
 </div>
 <div class="col-3 d-flex justify-content-end align-items-center pr-5">
-    <div class="row d-flex justify-content-end align-items-center">
-        <div class="col-7 m-0">
-            <a href="{{ request.user.profile.get_update_url }}" class="text-light active">Мой профиль</a>
-        </div>
-        <div class="col-5 m-0   ">
-            <a class="btn bt-sm btn-outline-light btn-block" href="{% url 'logout_url' %}">Выйти</a>
-        </div>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a href="" class="mx-2" id="searchIcon"><img src="{% static 'access/icons_search.png'%}" alt=""></a>
+        <div class="btn-group dropleft" role="group">
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Профиль
+                <span class="sr-only">Toggle Dropleft</span>
+            </button>
+            <div class="dropdown-menu">
+                <!-- Dropdown menu links -->
+                <a class="dropdown-item" href="{{ request.user.profile.get_absolute_url }}">Мой профиль</a>
+                <a class="dropdown-item" href="{% url 'my_docses_url' %}">Мои документы</a>
+                <a class="dropdown-item" href="#">Уведомления</a>
+                <a class="dropdown-item" href="{% url 'logout_url' %}">Выйти</a>
 
+            </div>
+        </div>
+    </nav>
 </div>

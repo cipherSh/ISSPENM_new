@@ -4,25 +4,30 @@ from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator
+from datetime import datetime, timedelta, date
+from django.utils.timezone import get_current_timezone
+from django.utils import timezone
 
 # forms
 from .forms import CriminalCreateForm, CriminalContactDetailAddForm, CriminalAddContactPersonForm, \
     CriminalAddAddressForm, PersonsCreateForm, CriminalOwnerChangeForm, CriminalAddRelativeForm, \
     CriminalConfidentChangeForm, CriminalManhuntAddForm, CriminalsCriminalCaseAddForm, CriminalCaseCreateForm, \
-    CriminalConvictionAddForm, CriminalManhuntUpdateForm, CriminalCaseUpdateForm,AddExistingCriminalForm
+    CriminalConvictionAddForm, CriminalManhuntUpdateForm, CriminalCaseUpdateForm, AddExistingCriminalForm, ToReviewForm
+from users.forms import UserLogsSearchForm
 
 # models
 from .models import Criminals, Persons, CriminalAddresses, Conviction, Confluence, Contacts, Manhunt, CriminalCase, \
-    CriminalCaseCriminals, CriminalsContactPersons, CriminalsRelatives, Occupation
+    CriminalCaseCriminals, CriminalsContactPersons, CriminalsRelatives, Occupation, Review
 
 from users.models import Profile, Role
 from django.contrib.auth.models import User
-from access.models import PersonAccess, RequestToOpen
+from access.models import PersonAccess, RequestToOpen, GroupAccess
 
 # views
 from access.views import determinate_owner_or_superuser, assign_full_access, determinate_have_access, access_determinate
 from users.views import action_logging_create, action_logging_view, action_logging_update, action_logging_delete, \
     action_logging_added, action_logging_exclude, action_logging_other, object_logs
+
 
 # Create your views here.
 
@@ -57,7 +62,7 @@ def homepage(request):
                                                  Q(INN=word))
             cc = CriminalCase.objects.filter(Q(number__icontains=word) | Q(year__icontains=word) |
                                              Q(organ__icontains=word) | Q(date_arousal__icontains=word) | Q(
-                                                                            date_suspension__icontains=word))
+                date_suspension__icontains=word))
             manhunts = Manhunt.objects.filter(Q(invest_case_number__icontains=word) |
                                               Q(date_arousal__icontains=word) |
                                               Q(invest_initiator__icontains=word))
@@ -90,6 +95,52 @@ def homepage(request):
     return render(request, 'home.html', context=context)
 
 
+def search_result(request):
+    search_query = request.GET.get('search_query', '')
+    criminals = None
+    cc = None
+    manhunts = None
+    profiles = None
+    users = None
+    roles = None
+
+    if search_query:
+        text = re.split('\W+', search_query)
+        for word in text:
+            criminals = Criminals.objects.filter(Q(last_name__icontains=word) | Q(first_name__icontains=word) |
+                                                 Q(patronymic__icontains=word) | Q(birthday__icontains=word) |
+                                                 Q(INN=word))
+            cc = CriminalCase.objects.filter(Q(number__icontains=word) | Q(year__icontains=word) |
+                                             Q(organ__icontains=word) | Q(date_arousal__icontains=word) | Q(
+                date_suspension__icontains=word))
+            manhunts = Manhunt.objects.filter(Q(invest_case_number__icontains=word) |
+                                              Q(date_arousal__icontains=word) |
+                                              Q(invest_initiator__icontains=word))
+            if word == 'admin' or word == 'head':
+                roles = Role.objects.get(role_type=word)
+            if roles:
+                profiles = Profile.objects.filter(role_id=roles)
+            users = User.objects.filter(Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(
+                username__icontains=word))
+    my_requests = RequestToOpen.objects.filter(user_id=request.user.profile).filter(check=True).order_by('-date_check')
+
+    context = {
+        'criminals': criminals,
+        'ccase': cc,
+        'manhunts': manhunts,
+        'profiles': profiles,
+        'users': users,
+        'search_text': search_query,
+        'my_requests': my_requests,
+
+    }
+    return render(request, 'search/search_result.html', context=context)
+
+
+def new_homepage(request):
+    return render(request, 'new_home.html')
+
+
 @login_required
 def registry_page(request):
     nav_btn_add = 'criminal_create_url'
@@ -97,7 +148,6 @@ def registry_page(request):
     criminals = Criminals.objects.order_by('-created')[:50]
     docs_requests = []
     docs_requests_group = []
-
 
     search_url = 'criminals_list_url'
 
@@ -125,6 +175,14 @@ def my_doc(request):
         'search_url': 'criminals_list_url'
     }
     return render(request, 'reestr/registry_main_page.html', context=context)
+
+
+def mydoc(request):
+    my_docs = Criminals.objects.filter(owner=request.user.profile).order_by('-created')
+    context = {
+        'my_docs': my_docs,
+    }
+    return render(request, 'reestr/docs/my_docs.html', context=context)
 
 
 @login_required
@@ -166,6 +224,7 @@ def qq_list(request):
     }
     return render(request, 'reestr/registry_main_page.html', context=context)
 
+
 @login_required
 def criminals_list(request):
     nav_btn_add = 'criminal_create_url'
@@ -198,8 +257,6 @@ def criminals_list(request):
     else:
         next_url = ''
 
-
-
     context = {
         'criminals': page,
         'is_paginated': is_paginated,
@@ -224,6 +281,8 @@ def criminal_detail(request, pk):
     criminal_case = CriminalCaseCriminals.objects.filter(criminal_id=criminal)
     pr = PersonAccess.objects.filter(doc_id=criminal).filter(user_id=request.user.profile)
     similar = similar_criminal(request, criminal)
+    person_access = PersonAccess.objects.filter(doc_id=criminal)
+    group_access = GroupAccess.objects.filter(doc_id=criminal)
     context = {
         'criminal': criminal,
         'similar': similar,
@@ -237,6 +296,8 @@ def criminal_detail(request, pk):
         'convictions': conviction,
         'manhunt': manhunt,
         'criminal_case': criminal_case,
+        'person_access': person_access,
+        'group_access': group_access,
         'access': pr
     }
 
@@ -321,6 +382,8 @@ def criminal_close_change(request, pk):
 def criminal_check(request, pk):
     criminal = Criminals.objects.get(id=pk)
     criminal.check = True
+    criminal.consideration = False
+    criminal.to_rev = False
     criminal.save()
     log_message = {'message': 'Подтвердил'}
     action_logging_other(request, criminal, message=log_message)
@@ -331,7 +394,6 @@ def criminal_check(request, pk):
 
 @login_required
 def cc_list(request):
-
     search_query = request.GET.get('search_query_text', '')
 
     if search_query:
@@ -489,7 +551,6 @@ def manhunt_logs(request, pk):
     return render(request, 'reestr/logs/criminal_logs.html', context=context)
 
 
-
 class CriminalCreateView(View):
     def get(self, request):
         form = CriminalCreateForm()
@@ -562,7 +623,8 @@ class CriminalContactDetailAddView(View):
     def get(self, request, pk):
         form = CriminalContactDetailAddForm()
         criminal = Criminals.objects.get(id=pk)
-        return render(request, 'reestr/criminals/add/criminal_contact_add.html', context={'form': form, 'criminal': criminal})
+        return render(request, 'reestr/criminals/add/criminal_contact_add.html',
+                      context={'form': form, 'criminal': criminal})
 
     def post(self, request, pk):
         bound_form = CriminalContactDetailAddForm(request.POST)
@@ -588,12 +650,12 @@ def contacts_detail_delete(request, pk):
     return redirect(criminal)
 
 
-
 class CriminalAddAddressView(View):
     def get(self, request, pk):
         form = CriminalAddAddressForm()
         criminal = Criminals.objects.get(id=pk)
-        return render(request, 'reestr/criminals/add/criminal_add_address.html', context={'form': form, 'criminal': criminal})
+        return render(request, 'reestr/criminals/add/criminal_add_address.html',
+                      context={'form': form, 'criminal': criminal})
 
     def post(self, request, pk):
         bound_form = CriminalAddAddressForm(request.POST)
@@ -607,7 +669,7 @@ class CriminalAddAddressView(View):
             action_logging_added(request, criminal, new_address)
             return redirect(criminal)
         return render(request, 'reestr/criminals/add/criminal_add_address.html', context={'form': bound_form,
-                                                                                 'criminal': criminal})
+                                                                                          'criminal': criminal})
 
 
 class CriminalAddRelativeView(View):
@@ -616,8 +678,8 @@ class CriminalAddRelativeView(View):
         person_form = PersonsCreateForm()
         add_form = CriminalAddRelativeForm()
         return render(request, 'reestr/criminals/add/criminal_add_relative.html', context={'person_form': person_form,
-                                                                                  'add_form': add_form,
-                                                                                  'criminal': criminal})
+                                                                                           'add_form': add_form,
+                                                                                           'criminal': criminal})
 
     def post(self, request, pk):
         bound_add_form = CriminalAddRelativeForm(request.POST)
@@ -635,9 +697,10 @@ class CriminalAddRelativeView(View):
             action_logging_create(request, new_person)
             action_logging_added(request, criminal, new_person)
             return redirect(criminal)
-        return render(request, 'reestr/criminals/add/criminal_add_relative.html', context={'person_form': bound_person_form,
-                                                                                  'add_form': bound_add_form,
-                                                                                  'criminal': criminal})
+        return render(request, 'reestr/criminals/add/criminal_add_relative.html',
+                      context={'person_form': bound_person_form,
+                               'add_form': bound_add_form,
+                               'criminal': criminal})
 
 
 class CriminalAddContactPersonView(View):
@@ -645,9 +708,10 @@ class CriminalAddContactPersonView(View):
         criminal = Criminals.objects.get(id=pk)
         person_form = PersonsCreateForm()
         add_form = CriminalAddContactPersonForm()
-        return render(request, 'reestr/criminals/add/criminal_add_contact-person.html', context={'person_form': person_form,
-                                                                                        'add_form': add_form,
-                                                                                        'criminal': criminal})
+        return render(request, 'reestr/criminals/add/criminal_add_contact-person.html',
+                      context={'person_form': person_form,
+                               'add_form': add_form,
+                               'criminal': criminal})
 
     def post(self, request, pk):
         bound_add_form = CriminalAddContactPersonForm(request.POST)
@@ -676,7 +740,7 @@ class CriminalOwnerChangeView(View):
         criminal = Criminals.objects.get(id=pk)
         bound_form = CriminalOwnerChangeForm(instance=criminal)
         return render(request, 'reestr/criminals/add/criminal_owner_change.html', context={'form': bound_form,
-                                                                                  'criminal': criminal})
+                                                                                           'criminal': criminal})
 
     def post(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -687,7 +751,7 @@ class CriminalOwnerChangeView(View):
             action_logging_other(request, criminal, log_message)
             return redirect(criminal)
         return render(request, 'reestr/criminals/add/criminal_owner_change.html', context={'form': bound_form,
-                                                                                  'criminal': criminal})
+                                                                                           'criminal': criminal})
 
 
 class CriminalConfidentChangeView(View):
@@ -695,7 +759,7 @@ class CriminalConfidentChangeView(View):
         criminal = Criminals.objects.get(id=pk)
         bound_form = CriminalConfidentChangeForm(instance=criminal)
         return render(request, 'reestr/criminals/add/criminal_confident_change.html', context={'form': bound_form,
-                                                                                      'criminal': criminal})
+                                                                                               'criminal': criminal})
 
     def post(self, request, pk):
         criminal = Criminals.objects.get(id=pk)
@@ -706,7 +770,7 @@ class CriminalConfidentChangeView(View):
             action_logging_other(request, criminal, log_message)
             return redirect(criminal)
         return render(request, 'reestr/criminals/add/criminal_confident_change.html', context={'form': bound_form,
-                                                                                      'criminal': criminal})
+                                                                                               'criminal': criminal})
 
 
 class CriminalConvictionAddView(View):
@@ -794,6 +858,7 @@ class CriminalCaseCreateView(View):
                     'error_messages': error_messages
                 }
                 return render(request, 'reestr/ccase/cc_create.html', context=context)
+            new_case.save()
             action_logging_create(request, new_case)
             return redirect(new_case)
         context = {
@@ -903,3 +968,186 @@ class ManhuntDeleteView(View):
         action_logging_delete(request, manhunt)
         manhunt.delete()
         return redirect(reverse('manhunt_list_url'))
+
+
+def report_dossier(request):
+    time = request.GET.get('time', '')
+    period = request.GET.get('period', '')
+    begin = request.GET.get('begin', '')
+    end = request.GET.get('end', '')
+    count = None
+    if time and not period:
+        if time == 'day':
+            key_term = timezone.now() - timedelta(minutes=60 * 24)
+            count = Criminals.objects.filter(created__gte=key_term)
+    return render(request, 'reports/report_dossier.html', {'count': count})
+
+
+def report_dossier_result(request, time):
+    time = request.GET.get('time', '')
+    period = request.GET.get('period', '')
+    begin = request.GET.get('begin', '')
+    end = request.GET.get('end', '')
+    count = None
+    if time and not period:
+        if time == 'day':
+            key_term = timezone.now() - timedelta(minutes=60 * 24)
+            count = Criminals.objects.filter(date_arousal__gte=key_term)
+    return render(request, 'reports/report_dossier_result.html', {'count': count})
+
+
+def report_cc(request):
+    time = request.GET.get('time', '')
+    period = request.GET.get('period', '')
+    begin = request.GET.get('begin', '')
+    end = request.GET.get('end', '')
+    key_term = None
+    count1 = None
+    count2 = None
+    if time and not period:
+        if time == 'day':
+            key_term = timezone.now() - timedelta(minutes=60 * 24)
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'week':
+            key_term = timezone.now() - timedelta(minutes=60 * 24 * 7)
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'month':
+            key_term = timezone.now() - timedelta(minutes=60 * 24 * 30)
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'quarter':
+            key_term = timezone.now() - timedelta(minutes=60 * 24 * 91)
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'year':
+            key_term = timezone.now() - timedelta(minutes=60 * 24 * 365)
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+    if time and period:
+        if time == 'day':
+            period = int(period)
+            key_term = timezone.now() - timedelta(minutes=(60 * 24 * period))
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'week':
+            period = int(period)
+            key_term = timezone.now() - timedelta(minutes=(60 * 24 * 7 * period))
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'month':
+            period = int(period)
+            key_term = timezone.now() - timedelta(minutes=(60 * 24 * 30 * period))
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'quarter':
+            period = int(period)
+            key_term = timezone.now() - timedelta(minutes=(60 * 24 * 91 * period))
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+        if time == 'year':
+            period = int(period)
+            key_term = timezone.now() - timedelta(minutes=(60 * 24 * 365 * period))
+            count1 = CriminalCase.objects.filter(date_arousal__gte=key_term).count()
+            count2 = CriminalCase.objects.filter(date_suspension__gte=key_term).count()
+    if begin and end:
+        count1 = CriminalCase.objects.filter(date_arousal__lte=end).filter(date_arousal__gte=begin).count()
+        count2 = CriminalCase.objects.filter(date_suspension__lte=end).filter(date_suspension__gte=begin).count()
+    context = {
+        'period': period,
+        'key_term': key_term,
+        'end': end,
+        'begin': begin,
+        'count1': count1,
+        'count2': count2
+    }
+    return render(request, 'reports/report_cc.html', context=context)
+
+
+def report_manhunt(request):
+    return render(request, 'reports/report_manhunt.html')
+
+
+def report_all(request):
+    form = UserLogsSearchForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'reports/report_all.html', context=context)
+
+
+def statistics(request):
+    count_criminals = Criminals.objects.all().count()
+    mto = Occupation.objects.get(type_occ='МТО')
+    meo = Occupation.objects.get(type_occ='МЭО')
+    count_terror = Criminals.objects.filter(occupation=mto).count()
+    count_extrem = Criminals.objects.filter(occupation=meo).count()
+    count_persons = Persons.objects.all().count()
+    count_cc = CriminalCase.objects.all().count()
+    count_manhunt = Manhunt.objects.all().count()
+    count_active_users = User.objects.filter(is_active=True).count()
+    count_inactive_users = User.objects.filter(is_active=False).count()
+
+    context = {
+        'count_criminals': count_criminals,
+        'count_terror': count_terror,
+        'count_extrem': count_extrem,
+        'count_persons': count_persons,
+        'count_cc': count_cc,
+        'count_manhunt': count_manhunt,
+        'count_active_users': count_active_users,
+        'count_inactive_users': count_inactive_users,
+    }
+    return render(request, 'reports/statistic.html', context=context)
+
+
+class SendToReview(View):
+    def get(self, request, pk):
+        criminal = Criminals.objects.get(id=pk)
+        form = ToReviewForm()
+        context = {
+            'form': form,
+            'criminal': criminal
+        }
+        return render(request, 'reestr/criminals/toreview.html', context=context)
+
+    def post(self, request, pk):
+        criminal = Criminals.objects.get(id=pk)
+        bound_form = ToReviewForm(request.POST)
+        if bound_form.is_valid():
+            new_review = bound_form.save(commit=False)
+            new_review.dosye = criminal
+            new_review.user = request.user.profile
+            new_review.reviewed = False
+            new_review.save()
+            criminal.to_rev = True
+            criminal.check = False
+            criminal.consideration = False
+            criminal.save()
+            return redirect(criminal)
+        context = {
+            'form': bound_form,
+            'criminal': criminal
+        }
+        return render(request, 'reestr/criminals/toreview.html', context=context)
+
+
+def to_consideration(request, pk):
+    criminal = Criminals.objects.get(id=pk)
+    criminal.check = False
+    criminal.consideration = True
+    criminal.save()
+    return redirect(criminal)
+
+
+def to_consideration_review(request, pk):
+    criminal = Criminals.objects.get(id=pk)
+    review = Review.objects.filter(dosye=criminal).get(reviewed=False)
+    review.reviewed = True
+    criminal.check = False
+    criminal.consideration = True
+    criminal.to_rev = False
+    review.save()
+    criminal.save()
+    return redirect(criminal)

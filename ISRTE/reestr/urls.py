@@ -4,8 +4,9 @@ from access.views import GroupAccessCreate, PersonalAccessCreate, RequestToOpenP
 
 urlpatterns = [
     path('', views.homepage, name='homepage_url'),
+    path('home/', views.new_homepage, name='new_homepage_url'),
     path('registry/', views.registry_page, name='registry_url'),
-    path('registry/my_docs', views.my_doc, name='my_docs_url'),
+    path('registry/my_docs/last', views.my_doc, name='my_docs_url'),
     path('registry/requests', views.qq_list, name='qq_list_url'),
     path('registry/uncheck', views.uncheck_docs, name='uncheck_docs_url'),
 
@@ -47,6 +48,10 @@ urlpatterns = [
          name="criminal_change_owner_url"),
     path('registry/criminal/<int:pk>/update/check', views.criminal_check, name="criminal_check_url"),
     path('registry/criminal/<int:pk>/update/close', views.criminal_close_change, name="criminal_close_change_url"),
+    path('registry/criminal/<int:pk>/review/', views.SendToReview.as_view(), name="to_review_url"),
+    path('registry/criminal/<int:pk>/consideration/', views.to_consideration, name="to_consideration_url"),
+    path('registry/criminal/<int:pk>/consideration/review/', views.to_consideration_review,
+         name="to_consideration_review_url"),
 
 
     path('registry/cc/', views.cc_list, name="cc_list_url"),
@@ -68,6 +73,15 @@ urlpatterns = [
 
 
     path('registry/contacts/<int:pk>/delete', views.contacts_detail_delete, name="contact_detail_delete_url"),
+    path('registry/search_result', views.search_result, name="search_result_url"),
 
 
+    path('report/report_dossier', views.report_dossier, name="report_dossier_url"),
+    path('report/report_cc', views.report_cc, name="report_cc_url"),
+    path('report/report_manhunt', views.report_manhunt, name="report_manhunt_url"),
+    path('report/report_all', views.report_all, name="report_all_url"),
+
+    path('statistics/', views.statistics, name="statistics_url"),
+
+    path('registry/my_docs', views.mydoc, name='my_docses_url'),
 ]

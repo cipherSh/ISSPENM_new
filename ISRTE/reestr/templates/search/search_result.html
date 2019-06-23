@@ -1,0 +1,177 @@
+{% extends "wrapper.html" %}
+{% block page%}
+<div class="col-lg-5"></div>
+<div class="col-lg-3"><h4>Уголовное дело</h4></div>
+<div class="col-lg-4 p-1">
+    <div class="row">
+        <div class="col-lg-6"></div>
+        <div class="col-lg-6"><a href="" class="btn btn-success btn-sm btn-block">Добавить</a></div>
+    </div>
+
+</div>
+{% endblock %}
+{% block content_wrapper %}
+
+<div class="row border p-3 shadow" style="min-height:570px">
+    {% if not search_text %}
+    {% if my_requests %}
+    <main role="main" class="container border shadow mt-5 bg-light">
+        <div class="row">
+            <div class="col text-center mb-4">
+                <p class="h4">Мои запросы</p>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <br>
+            {% for req in my_requests %}
+            <div class="col-lg-5 rounded border m-0 shadow my-2 mx-4 ml-5 bg-white" style="min-height:200px">
+                <h6 class="pb-2 mb-0">{{req.doc}}</h6>
+                <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                    <strong class="d-block text-gray-dark">{% if req.group_id %}Групповой доступ{% else %}Индивидуальный
+                        доступ{% endif %}</strong>
+                </p>
+                {% if req.group_id %}
+                <p class="pb-3 mb-0 small border-bottom border-gray">
+                    <strong class="d-block text-gray-dark">{{ req.group_id }}</strong>
+                </p>
+                {% endif %}
+                {% if req.accept %}
+                <p class="pb-3 mb-0 small">
+                    <strong class="d-block text-gray-dark">Одобрено</strong>
+                </p>
+                {% else %}
+                <p class="pb-3 mb-0 small">
+                    <strong class="d-block text-gray-dark">Отклонено</strong>
+                </p>
+                {% endif %}
+                {% if req.reason_reject %}
+                <p class="pb-3 mb-0 small">
+                    {{ req.reason_reject }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+    {% endif %}
+    {% endif %}
+
+    {% if criminals %}
+    <main role="main" class="container rounded shadow py-1 mt-5 mb-5 border">
+        <div class="my-2 p-2 bg-white rounded box-shadow">
+            <h6 class="pb-2 mb-0">Досье</h6>
+            <div class="text-muted pt-3">
+                {% for criminal in criminals %}
+                <div class="row border-bottom mx-2 mb-2">
+                    <div class="col-lg-4">{{ criminal }}</div>
+                    <div class="col-lg-2 text-right">{{ criminal.INN}}</div>
+                    <div class="col-lg-2 text-right">{{ criminal.birthday }}</div>
+                    <div class="col-lg-2 text-right">{{ criminal.occupation}}</div>
+                    <div class="col-lg-2 text-right"><a href="{{ criminal.get_absolute_url }}">Посмотреть</a></div>
+
+                </div>
+
+                {% endfor %}
+            </div>
+            <small class="d-block text-right mt-3">
+                <a href="{% url 'criminals_list_url' %}">Весь список</a>
+            </small>
+        </div>
+    </main>
+    {% endif %}
+
+    {% if ccase %}
+    <main role="main" class="container shadow py-1 mt-5 mb-5 border">
+        <div class="my-2 p-2 bg-white rounded box-shadow">
+            <h6 class="pb-2 mb-0">Уголовные дела</h6>
+            <div class="text-muted pt-3">
+                {% for case in ccase %}
+                <div class="row border-bottom mx-2 mb-2">
+                    <div class="col-lg-2">{{ case }}</div>
+                    <div class="col-lg-3 text-right">{{ case.organ}}</div>
+                    <div class="col-lg-3 text-right">{{ case.date_arousal }}</div>
+                    <div class="col-lg-2 text-right">{{ case.date_suspension }}</div>
+                    <div class="col-lg-2 text-right"><a href="{{ case.get_absolute_url }}">Посмотреть</a></div>
+
+                </div>
+
+                {% endfor %}
+            </div>
+            <small class="d-block text-right mt-3">
+                <a href="{% url 'cc_list_url' %}">Весь список</a>
+            </small>
+        </div>
+    </main>
+    {% endif %}
+
+    {% if manhunts %}
+    <main role="main" class="container shadow py-1 mt-5 mb-5 border">
+        <div class="my-2 p-2 bg-white rounded box-shadow">
+            <h6 class="pb-2 mb-0">Розыскные дела</h6>
+            <div class="text-muted pt-3">
+                {% for manhunt in manhunts %}
+                <div class="row border-bottom mx-2 mb-2">
+                    <div class="col-lg-2">{{ manhunt }}</div>
+                    <div class="col-lg-4 text-right">{{ manhunt.criminal_id }}</div>
+                    <div class="col-lg-2 text-right">{{ manhunt.date_arousal }}</div>
+                    <div class="col-lg-2 text-right">{{ manhunt.invest_initiator }}</div>
+                    <div class="col-lg-2 text-right"><a href="{{ manhunt.get_absolute_url }}">Посмотреть</a></div>
+
+                </div>
+
+                {% endfor %}
+            </div>
+            <small class="d-block text-right mt-3">
+                <a href="{% url 'manhunt_list_url' %}">Весь список</a>
+            </small>
+        </div>
+    </main>
+    {% endif %}
+
+    {% if profiles or users %}
+    <main role="main" class="container shadow py-1 mt-5 mb-5 border">
+        <div class="my-2 p-2 bg-white rounded box-shadow">
+            <h6 class="pb-2 mb-0">Пользователи</h6>
+            <div class="text-muted pt-3">
+                <div class="row font-weight-bold mx-2 mb-2">
+                    <div class="col-lg-4">ФИО</div>
+                    <div class="col-lg-2 text-right">Логин</div>
+                    <div class="col-lg-2 text-right">Роль</div>
+                    <div class="col-lg-2 text-right">Статус</div>
+                </div>
+                {% for profile in profiles %}
+                <div class="row border-bottom mx-2 mb-2">
+                    <div class="col-lg-4">{{ profile }}</div>
+                    <div class="col-lg-2 text-right">{{ profile.user }}</div>
+                    <div class="col-lg-2 text-right">{{ profile.role_id}}</div>
+                    <div class="col-lg-2 text-right">
+                        {% if profile.user.is_active %}
+                        Активный
+                        {% else %}
+                        Не активный
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-2 text-right"><a href="{{ profile.get_absolute_url }}">Профиль</a></div>
+                </div>
+
+                {% endfor %}
+                {% for user in users %}
+                <div class="row border-bottom mx-2 mb-2">
+                    <div class="col-lg-4">{{ user.profile }}</div>
+                    <div class="col-lg-2 text-right">{{ user}}</div>
+                    <div class="col-lg-2 text-right">{{ user.profile.role_id }}</div>
+                    <div class="col-lg-2 text-right">{% if user.is_active %}Активный{% else %}Не активный{% endif %}
+                    </div>
+                    <div class="col-lg-2 text-right"><a href="{{ user.profile.get_absolute_url }}">Профиль</a></div>
+                </div>
+
+                {% endfor %}
+            </div>
+            <small class="d-block text-right mt-3">
+                <a href="{% url 'users_list_url' %}">Весь список</a>
+            </small>
+        </div>
+    </main>
+    {% endif %}
+</div>
+{% endblock content_wrapper %}

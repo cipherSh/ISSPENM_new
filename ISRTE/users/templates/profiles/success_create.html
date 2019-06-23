@@ -1,20 +1,24 @@
 {% extends "wrapper.html" %}
 
 {% block content_wrapper %}
-<div class="row">
-    <div class="col">Пользователь успешно создан</div>
-</div>
-<div class="row">
-    <div class="col">{{ password }}</div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <a href="{{ profile.get_update_url }}">Далее</a>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <a href="{% url 'pdf_url' %}">PDF</a>
+<div class="row border shadow" style="min-height: 570px">
+    <div class="col">
+        <div class="row mt-3">
+            <div class="col">Пользователь успешно создан</div>
+        </div>
+        <div class="row mt-2">
+            <div class="col font-weight-bold">Имя пользовтеля:</div>
+            <div class="col">{{ user.username }}</div>
+        </div>
+        <div class="row mt-2">
+            <div class="col font-weight-bold">Начальный пароль:</div>
+            <div class="col">{{ password }}</div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <a href="{{ user.profile.get_update_url }}" class="btn btn-primary">Далее</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -197,7 +197,7 @@
     </div>
 </main>
 {% endif %}
-
+{% if request.user.is_superuser %}
 <main role="static" class="container mb-5" style="margin-top:100px">
     <p class="text-dark pb-3 mb-0 d-block lh-125 h6">Статистика:</p>
     <div class="row">
@@ -239,8 +239,8 @@
             </p>
         </div>
     </div>
-
 </main>
+{% endif %}
 
 
 {% endblock content %}

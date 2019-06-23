@@ -1,0 +1,65 @@
+{% extends "reports/reports.html" %}
+{% block content_reports %}
+<div class="row p-3">
+    <div class="col-12">
+        <div class="row border-bottom mb-4">
+            <h3>Отчет по досье</h3>
+        </div>
+        <p>Отчет за последний:</p>
+        <form action="{% url 'report_dossier_url'%}" method="get">
+            <div class="row form-group">
+                <div class="col-10">
+                    <select name="time" class="form-control">
+                        <option value="day">Последний день</option>
+                        <option value="week">Неделю</option>
+                        <option value="month">Месяц</option>
+                        <option value="quarter">Квартал</option>
+                        <option value="year">Год</option>
+                    </select>
+                </div>
+                <input type="submit" class="btn btn-primary">
+            </div>
+        </form>
+        <p>Выбор период:</p>
+        <form action="{% url 'report_dossier_url'%}" method="get">
+            <div class="row form-group">
+                <div class="col-5">
+                    <select name="time" id="" class="form-control">
+                        <option value="">День</option>
+                        <option value="">Неделя</option>
+                        <option value="">Месяц</option>
+                        <option value="">Квартал</option>
+                        <option value="">Год</option>
+                    </select>
+                </div>
+                <div class="col-5">
+                    <input type="text" name="period" class="form-control">
+                </div>
+                <input type="submit" class="btn btn-primary">
+            </div>
+        </form>
+        <p>Интервал:</p>
+        <form action="{% url 'report_dossier_url'%}" method="get">
+            <div class="row form-group">
+                <div class="col-5">
+                    <input type="date" name="begin" class="form-control">
+                </div>
+                <div class="col-5">
+                    <input type="date" name="end" class="form-control">
+                </div>
+                <input type="submit" class="btn btn-primary">
+            </div>
+        </form>
+        <hr>
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col border h4">Заведено:</div>
+                    <div class="col border">{{count}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

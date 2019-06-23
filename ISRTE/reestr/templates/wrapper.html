@@ -2,7 +2,7 @@
 {% block content %}
 
 
-<div class="row mt-1 mb-3 rounded shadow-sm border" style="background-color: SteelBlue">
+<div class="row mt-1 mb-3 rounded shadow-sm border d-none" style="background-color: SteelBlue">
     <div class="col-12">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <a class="navbar-brand border-right pr-3" href="{% url 'registry_url' %}">{{wrapper_title}}</a>
@@ -62,6 +62,16 @@
             </ul>
             {% endif %}
             {% endif %}
+            {% if wrapper_title == 'Управление доступом' %}
+            {% if request.user.is_superuser %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#">Отчет</a>
+                </li>
+            </ul>
+            {% endif %}
+            {% endif %}
+
             {% if search_url %}
             <form action="{% url search_url %}" class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search"

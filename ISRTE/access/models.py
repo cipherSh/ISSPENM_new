@@ -28,6 +28,9 @@ class GroupAccess(models.Model):
     def get_update_url(self):
         return reverse('group_access_update_url', kwargs={'pk': self.id})
 
+    def get_delete_url(self):
+        return reverse('group_access_delete_url', kwargs={'pk': self.id})
+
 
 class PersonAccess(models.Model):
     doc_id = models.ForeignKey(Criminals, verbose_name='Досье', on_delete=models.CASCADE)
@@ -46,6 +49,9 @@ class PersonAccess(models.Model):
 
     def get_update_url(self):
         return reverse('personal_access_update_url', kwargs={'pk': self.id})
+
+    def get_delete_url(self):
+        return reverse('personal_access_delete_url', kwargs={'pk': self.id})
 
 
 class RequestToOpen(models.Model):
